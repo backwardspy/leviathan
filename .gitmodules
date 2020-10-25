@@ -1,0 +1,9 @@
+[submodule "leviathan/vendor/spdlog"]
+	path = leviathan/vendor/spdlog
+	url = git@github.com:backwardspy/spdlog.git
+[submodule "leviathan/vendor/glfw"]
+	path = leviathan/vendor/glfw
+	url = git@github.com:backwardspy/glfw.git
+[submodule "leviathan/vendor/imgui"]
+	path = leviathan/vendor/imgui
+	url = git@github.com:backwardspy/imgui.git

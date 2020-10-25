@@ -1,0 +1,24 @@
+#pragma once
+
+#include "core.h"
+
+#if defined(LV_PLATFORM_WINDOWS)
+#include <Windows.h>
+#endif
+
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <memory>
+#include <sstream>
+
+#include <array>
+#include <queue>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
