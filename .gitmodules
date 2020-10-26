@@ -7,3 +7,6 @@
 [submodule "leviathan/vendor/imgui"]
 	path = leviathan/vendor/imgui
 	url = git@github.com:backwardspy/imgui.git
+[submodule "leviathan/vendor/glm"]
+	path = leviathan/vendor/glm
+	url = git@github.com:backwardspy/glm.git

@@ -12,13 +12,17 @@ vendor = {
         glfw = "%{wks.location}/leviathan/vendor/glfw/include",
         glad = "%{wks.location}/leviathan/vendor/glad/include",
         imgui = "%{wks.location}/leviathan/vendor/imgui",
+        glm = "%{wks.location}/leviathan/vendor/glm",
     }
 }
 
-include "leviathan/vendor/spdlog"
-include "leviathan/vendor/glfw"
-include "leviathan/vendor/glad"
-include "leviathan/vendor/imgui"
+group "dependencies"
+    include "leviathan/vendor/spdlog"
+    include "leviathan/vendor/glfw"
+    include "leviathan/vendor/glad"
+    include "leviathan/vendor/imgui"
+    include "leviathan/vendor/glm"
+group ""
 
 project "leviathan"
     location "leviathan"
@@ -45,11 +49,11 @@ project "leviathan"
         vendor.includedirs.glfw,
         vendor.includedirs.glad,
         vendor.includedirs.imgui,
+        vendor.includedirs.glm,
     }
 
     defines {
         "SPDLOG_COMPILED_LIB",
-        "SPDLOG_SHARED_LIB",
     }
 
     pchheader "%{prj.name}/lvpch.h"
@@ -60,13 +64,13 @@ project "leviathan"
         "glfw",
         "glad",
         "imgui",
+        "glm",
         "opengl32.lib",
     }
 
     filter "system:windows"
         defines "LV_BUILD_DLL"
-
-        postbuildcommands ("{COPY} %{cfg.buildtarget.relpath} ../bin/"..target_triple.."/sandbox")
+        postbuildcommands ("{COPY} \"%{cfg.buildtarget.relpath}\" \"../bin/"..target_triple.."/sandbox/\"")
     
     filter "configurations:debug"
         defines "DEBUG"
@@ -101,11 +105,11 @@ project "sandbox"
         vendor.includedirs.glfw,
         vendor.includedirs.glad,
         vendor.includedirs.imgui,
+        vendor.includedirs.glm,
     }
 
     defines {
         "SPDLOG_COMPILED_LIB",
-        "SPDLOG_SHARED_LIB",
     }
 
     links "leviathan"
