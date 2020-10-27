@@ -3,15 +3,15 @@
 #include "leviathan/application.h"
 #include "leviathan/log.h"
 
-#include "leviathan/debug/imgui_layer.h"
+#include "leviathan/layers/imgui_layer.h"
 
 namespace lv {
-    Application::Application() noexcept :
+    Application::Application(LayerVector&& layers) noexcept :
         event_bus {},
         running { false },
         window { WindowSettings{1280, 800, "Leviathan Application"}, event_bus },
         input { event_bus },
-        layers { event_bus }
+        layer_stack { event_bus, with_default_layers(std::move(layers)) }
     {
     }
 
@@ -25,10 +25,22 @@ namespace lv {
 
         while (running) {
             event_bus.drain();
+
             window.update();
+
+            layer_stack.pre_update();
+            layer_stack.update();
+            layer_stack.post_update();
+
             window.clear();
-            layers.update();
+
+            layer_stack.pre_render();
+            layer_stack.render();
+            layer_stack.gui();
+            layer_stack.post_render();
+
             window.display();
+
             input.end_frame();
         }
 
@@ -47,9 +59,7 @@ namespace lv {
 
         event_bus.add_listener(*this);
 
-        std::vector<std::unique_ptr<Layer>> layer_stack;
-        layer_stack.emplace_back(std::make_unique<ImGuiLayer>(window, input));
-        layers.set_layers(std::move(layer_stack));
+        layer_stack.init();
 
         running = true;
 
@@ -63,5 +73,10 @@ namespace lv {
                 stop();
                 break;
         }
+    }
+
+    LayerVector Application::with_default_layers(LayerVector&& layers) const {
+        layers.emplace(std::begin(layers), std::make_unique<ImGuiLayer>(window));
+        return layers;
     }
 }

@@ -5,10 +5,8 @@
 #include "input.h"
 #include "layer_stack.h"
 
-#include "debug/imgui_layer.h"
-
 namespace lv {
-    class LV_API Application : public IEventListener {
+    class Application : public IEventListener {
     public:
         Application(const Application&&) noexcept = delete;
         void operator=(const Application&&) noexcept = delete;
@@ -21,17 +19,19 @@ namespace lv {
         virtual ~Application() noexcept;
 
     protected:
-        Application() noexcept;
+        Application(LayerVector&& layers) noexcept;
 
     private:
         bool init() noexcept;
 
         virtual void handle(const Event&) noexcept override;
 
+        LayerVector with_default_layers(LayerVector&&) const;
+
         EventBus event_bus;
         Window window;
         Input input;
-        LayerStack layers;
+        LayerStack layer_stack;
 
         bool running;
     };

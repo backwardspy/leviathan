@@ -29,6 +29,7 @@ namespace lv {
 
         constexpr int get_width() const noexcept { return settings.width; }
         constexpr int get_height() const noexcept { return settings.height; }
+        constexpr GLFWwindow* get_glfw_handle() const noexcept { return handle; }
 
         ~Window() noexcept;
 
