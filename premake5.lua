@@ -26,14 +26,9 @@ group ""
 
 project "leviathan"
     location "leviathan"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
     cppdialect "C++17"
-
-    disablewarnings {
-        "4251",
-        "4275",
-    }
 
     targetdir ("bin/"..target_triple.."/%{prj.name}")
     objdir ("bin/obj/"..target_triple.."/%{prj.name}")
@@ -54,6 +49,7 @@ project "leviathan"
 
     defines {
         "SPDLOG_COMPILED_LIB",
+        "_CRT_SECURE_NO_WARNINGS",  -- stops noisy warnings about imgui
     }
 
     pchheader "%{prj.name}/lvpch.h"
@@ -68,10 +64,6 @@ project "leviathan"
         "opengl32.lib",
     }
 
-    filter "system:windows"
-        defines "LV_BUILD_DLL"
-        postbuildcommands ("{COPY} \"%{cfg.buildtarget.relpath}\" \"../bin/"..target_triple.."/sandbox/\"")
-    
     filter "configurations:debug"
         defines "DEBUG"
         symbols "On"
@@ -85,11 +77,6 @@ project "sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
-
-    disablewarnings {
-        "4251",
-        "4275",
-    }
 
     targetdir ("bin/"..target_triple.."/%{prj.name}")
     objdir ("bin/obj/"..target_triple.."/%{prj.name}")
@@ -112,7 +99,9 @@ project "sandbox"
         "SPDLOG_COMPILED_LIB",
     }
 
-    links "leviathan"
+    links {
+        "leviathan",
+    }
 
     filter "configurations:debug"
         defines { "DEBUG" }
