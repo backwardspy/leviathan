@@ -2,12 +2,14 @@
 
 #include "leviathan/window.h"
 #include "leviathan/log.h"
+#include "leviathan/platform/opengl/opengl_context.h"
 
 namespace lv {
     Window::Window(WindowSettings&& settings, EventBus& event_bus) noexcept :
         settings { std::move(settings) },
         event_bus { event_bus },
-        handle { nullptr }
+        handle { nullptr },
+        context { nullptr }
     {}
 
     Window::~Window() noexcept {
@@ -73,24 +75,11 @@ namespace lv {
             window.on_mouse_scrolled(args...);
         });
 
-        Log::core_debug("Making window context current");
-        glfwMakeContextCurrent(handle);
-
-        Log::core_debug("Loading OpenGL core profile function into GLFW loadproc");
-        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-            Log::core_error("Failed to load OpenGL core profile functions via GLAD");
+        Log::core_debug("Setting up render context");
+        context = std::make_unique<OpenGLContext>(get_glfw_handle());
+        if (!context->init()) {
+            Log::core_critical("Failed to initialise render context.");
             return false;
-        }
-        Log::core_info("OpenGL version {}.{} has been initialised", GLVersion.major, GLVersion.minor);
-
-        if (GLVersion.major != LVGLVersionMajor || GLVersion.minor != LVGLVersionMinor) {
-            Log::core_warn(
-                "Warning, loaded OpenGL version does not match engine configuration. "
-                "Expected {}.{}, got {}.{}. "
-                "This might indicate a mismatched glad version.",
-                LVGLVersionMajor, LVGLVersionMinor,
-                GLVersion.major, GLVersion.minor
-            );
         }
 
         return true;
@@ -106,7 +95,7 @@ namespace lv {
     }
 
     void Window::display() const noexcept {
-        glfwSwapBuffers(handle);
+        context->present();
     }
 
     void Window::on_window_closed() noexcept {
