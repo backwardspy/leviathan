@@ -3,6 +3,7 @@
 #include "lvpch.h"
 
 #include "events.h"
+#include "renderer/render_context.h"
 
 namespace lv {
     struct WindowSettings {
@@ -45,5 +46,6 @@ namespace lv {
         WindowSettings settings;
         GLFWwindow* handle;
         EventBus& event_bus;
+        std::unique_ptr<RenderContext> context;
     };
 }
