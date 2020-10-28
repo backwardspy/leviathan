@@ -4,6 +4,7 @@
 #include "leviathan/log.h"
 
 #include "leviathan/layers/imgui_layer.h"
+#include "leviathan/layers/debug_gl_layer.h"
 
 namespace lv {
     Application::Application(LayerVector&& layers) noexcept :
@@ -76,6 +77,7 @@ namespace lv {
     }
 
     LayerVector Application::with_default_layers(LayerVector&& layers) const {
+        layers.emplace(std::begin(layers), std::make_unique<DebugGLLayer>());
         layers.emplace(std::begin(layers), std::make_unique<ImGuiLayer>(window));
         return layers;
     }
