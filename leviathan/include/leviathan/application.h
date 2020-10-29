@@ -19,10 +19,11 @@ namespace lv {
         virtual ~Application() noexcept;
 
     protected:
-        Application(LayerVector&& layers) noexcept;
+        Application();
+        virtual LayerVector get_layers() const = 0;
 
     private:
-        bool init() noexcept;
+        void init() noexcept;
 
         virtual void handle(const Event&) noexcept override;
 
@@ -37,5 +38,5 @@ namespace lv {
     };
 
     // defined by client
-    std::unique_ptr<Application> CreateApplication() noexcept;
+    std::unique_ptr<Application> CreateApplication();
 }

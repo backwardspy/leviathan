@@ -9,9 +9,9 @@ namespace lv {
 
     class LayerStack : public IEventListener {
     public:
-        LayerStack(EventBus& event_bus, LayerVector&& layers) noexcept;
+        LayerStack(EventBus& event_bus) noexcept;
 
-        void init() noexcept;
+        void init(LayerVector&&) noexcept;
 
         void pre_update() noexcept;
         void update() noexcept;

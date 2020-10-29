@@ -18,12 +18,11 @@ namespace lv {
 
     class Window {
     public:
-        Window(WindowSettings&&, EventBus&) noexcept;
+        Window(WindowSettings&&, EventBus&);
 
         Window(const Window&) = delete;
         void operator=(const Window&) = delete;
 
-        bool create() noexcept;
         void update() const noexcept;
         void clear() const noexcept;
         void display() const noexcept;
@@ -31,6 +30,7 @@ namespace lv {
         constexpr int get_width() const noexcept { return settings.width; }
         constexpr int get_height() const noexcept { return settings.height; }
         constexpr GLFWwindow* get_glfw_handle() const noexcept { return handle; }
+        inline RenderContext& get_context() const noexcept { return *context; }
 
         ~Window() noexcept;
 

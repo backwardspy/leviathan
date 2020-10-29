@@ -3,49 +3,45 @@
 #include "leviathan/window.h"
 #include "leviathan/log.h"
 #include "leviathan/platform/opengl/opengl_context.h"
+#include "leviathan/exc.h"
 
 namespace lv {
-    Window::Window(WindowSettings&& settings, EventBus& event_bus) noexcept :
+    Window::Window(WindowSettings&& settings, EventBus& event_bus) :
         settings { std::move(settings) },
         event_bus { event_bus },
         handle { nullptr },
         context { nullptr }
-    {}
-
-    Window::~Window() noexcept {
-        Log::core_debug("Destroying GLFW window");
-        glfwDestroyWindow(handle);
-
-        Log::core_debug("Terminating GLFW");
-        glfwTerminate();
-    }
-
-    bool Window::create() noexcept {
-        Log::core_debug("Initialising GLFW with OpenGL {}.{}", LVGLVersionMajor, LVGLVersionMinor);
+    {
+        Log::core_debug("Initialising GLFW with OpenGL {}.{}.", LVGLVersionMajor, LVGLVersionMinor);
         if (!glfwInit()) {
             Log::critical("Failed to initialise GLFW.");
-            return false;
+            throw exc::RenderContextException {};
         }
 
         glfwSetErrorCallback([] (int code, const char* description) {
-            Log::core_error("GLFW error {}: {}", code, description);
+            Log::core_error("GLFW error {}: {}.", code, description);
         });
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, LVGLVersionMajor);
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, LVGLVersionMajor);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 9999);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, LVGLVersionMinor);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-        Log::core_debug("Creating GLFW window");
+#if defined(DEBUG)
+        glfwWindowHint(GLFW_CONTEXT_DEBUG, GLFW_TRUE);
+#endif
+
+        Log::core_debug("Creating GLFW window.");
         handle = glfwCreateWindow(settings.width, settings.height, settings.title.c_str(), nullptr, nullptr);
         if (!handle) {
             Log::core_critical("Failed to create GLFW window.");
-            return false;
+            throw exc::RenderContextException {};
         }
 
-        Log::core_debug("Setting window user pointer");
+        Log::core_debug("Setting window user pointer.");
         glfwSetWindowUserPointer(handle, this);
 
-        Log::core_debug("Setting window callbacks");
+        Log::core_debug("Setting window callbacks.");
         glfwSetWindowCloseCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
             auto& window = *(Window*) glfwGetWindowUserPointer(glfw_window);
             window.on_window_closed(args...);
@@ -75,14 +71,20 @@ namespace lv {
             window.on_mouse_scrolled(args...);
         });
 
-        Log::core_debug("Setting up render context");
+        Log::core_debug("Setting up render context.");
         context = std::make_unique<OpenGLContext>(get_glfw_handle());
         if (!context->init()) {
             Log::core_critical("Failed to initialise render context.");
-            return false;
+            throw exc::RenderContextException {};
         }
+    }
 
-        return true;
+    Window::~Window() noexcept {
+        Log::core_debug("Destroying GLFW window.");
+        glfwDestroyWindow(handle);
+
+        Log::core_debug("Terminating GLFW.");
+        glfwTerminate();
     }
 
     void Window::update() const noexcept {
@@ -90,7 +92,7 @@ namespace lv {
     }
 
     void Window::clear() const noexcept {
-        glClearColor(0.3f, 0.05f, 0.8f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
@@ -115,7 +117,7 @@ namespace lv {
             case GLFW_PRESS: event_bus.emplace(key_pressed_event((KeyCode) key, shift, control, alt, super)); return;
             case GLFW_RELEASE: event_bus.emplace(key_released_event((KeyCode) key, shift, control, alt, super)); return;
             case GLFW_REPEAT: return;
-            default: Log::core_error("Unknown GLFW key action: {}", action); return;
+            default: Log::core_error("Unknown GLFW key action: {}.", action); return;
         }
     }
 
@@ -127,7 +129,7 @@ namespace lv {
         switch (action) {
             case GLFW_PRESS: event_bus.emplace(button_pressed_event((ButtonCode) button)); return;
             case GLFW_RELEASE: event_bus.emplace(button_released_event((ButtonCode) button)); return;
-            default: Log::core_error("Unknown GLFW mouse button action: {}", action); return;
+            default: Log::core_error("Unknown GLFW mouse button action: {}.", action); return;
         }
     }
 
