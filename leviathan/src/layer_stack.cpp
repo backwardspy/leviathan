@@ -4,15 +4,16 @@
 #include "leviathan/log.h"
 
 namespace lv {
-    LayerStack::LayerStack(EventBus& event_bus, LayerVector&& layers) noexcept : layers { std::move(layers) } {
+    LayerStack::LayerStack(EventBus& event_bus) noexcept {
         event_bus.add_listener(*this);
-        Log::core_info("Layer stack set up with {} layer(s)", this->layers.size());
     }
 
-    void LayerStack::init() noexcept {
+    void LayerStack::init(LayerVector&& app_layers) noexcept {
+        layers = std::move(app_layers);
         for (auto& layer : layers) {
             layer->init();
         }
+        Log::core_info("Layer stack initialised with {} layer(s).", layers.size());
     }
 
     void LayerStack::pre_update() noexcept {

@@ -4,25 +4,21 @@
 #include "leviathan/log.h"
 
 #include "leviathan/layers/imgui_layer.h"
-#include "leviathan/layers/debug_gl_layer.h"
 
 namespace lv {
-    Application::Application(LayerVector&& layers) noexcept :
+    Application::Application() :
         event_bus {},
         running { false },
         window { WindowSettings{1280, 800, "Leviathan Application"}, event_bus },
         input { event_bus },
-        layer_stack { event_bus, with_default_layers(std::move(layers)) }
+        layer_stack { event_bus }
     {
     }
 
     Application::~Application() noexcept {}
 
     int Application::run() noexcept {
-        if (!init()) {
-            Log::core_info("Quitting early due to unrecoverable issues during engine initialisation");
-            return -1;
-        }
+        init();
 
         while (running) {
             event_bus.drain();
@@ -52,19 +48,11 @@ namespace lv {
         running = false;
     }
 
-    bool Application::init() noexcept {
-        Log::init();
-        Log::core_info("Leviathan starting up");
-
-        if (!window.create()) return false;
-
+    void Application::init() noexcept {
         event_bus.add_listener(*this);
-
-        layer_stack.init();
-
+        layer_stack.init(with_default_layers(get_layers()));
         running = true;
-
-        return true;
+        Log::core_info("Application starting up.");
     }
 
     void Application::handle(const Event& event) noexcept {
@@ -77,7 +65,6 @@ namespace lv {
     }
 
     LayerVector Application::with_default_layers(LayerVector&& layers) const {
-        layers.emplace(std::begin(layers), std::make_unique<DebugGLLayer>());
         layers.emplace(std::begin(layers), std::make_unique<ImGuiLayer>(window));
         return layers;
     }
