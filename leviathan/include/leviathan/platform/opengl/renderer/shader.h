@@ -1,7 +1,7 @@
 #pragma once
 
 #include "leviathan/lvpch.h"
-
+#include "leviathan/platform/opengl/opengl.h"
 #include "leviathan/renderer/shader.h"
 
 namespace lv {

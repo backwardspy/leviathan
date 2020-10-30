@@ -48,6 +48,7 @@ project "leviathan"
     }
 
     defines {
+        "LV_GRAPHICS_OPENGL",
         "SPDLOG_COMPILED_LIB",
         "_CRT_SECURE_NO_WARNINGS",  -- stops noisy warnings about imgui
     }
@@ -96,6 +97,7 @@ project "sandbox"
     }
 
     defines {
+        "LV_GRAPHICS_OPENGL",
         "SPDLOG_COMPILED_LIB",
     }
 

@@ -2,7 +2,6 @@
 
 #include "lvpch.h"
 #include "layer.h"
-#include "window.h"
 
 namespace lv {
     using LayerVector = std::vector<std::unique_ptr<Layer>>;

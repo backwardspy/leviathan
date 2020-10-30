@@ -1,19 +1,25 @@
 #pragma once
 
-#include "lvpch.h"
-
-#include "events.h"
-#include "renderer/render_context.h"
+#include "leviathan/lvpch.h"
+#include "leviathan/events.h"
+#include "leviathan/renderer/context.h"
 
 namespace lv {
     struct WindowSettings {
-        int width, height;
-        std::string title;
-        WindowSettings(int width, int height, std::string&& title) noexcept :
-            width { width },
-            height { height },
-            title { std::move(title) }
-        {}
+        glm::ivec2 size { 800, 600 };
+        std::string title { "Leviathan Application" };
+    };
+
+    class WindowImpl {
+    public:
+        virtual void update() const noexcept = 0;
+        virtual void present() const noexcept = 0;
+
+        virtual Context& get_context() const noexcept = 0;
+        virtual glm::ivec2 get_size() const noexcept = 0;
+        virtual std::any get_native_handle() const noexcept = 0;
+
+        virtual ~WindowImpl() noexcept {}
     };
 
     class Window {
@@ -23,29 +29,14 @@ namespace lv {
         Window(const Window&) = delete;
         void operator=(const Window&) = delete;
 
-        void update() const noexcept;
-        void clear() const noexcept;
-        void display() const noexcept;
+        void update() const noexcept { impl->update(); }
+        void present() const noexcept { impl->present(); }
 
-        constexpr int get_width() const noexcept { return settings.width; }
-        constexpr int get_height() const noexcept { return settings.height; }
-        constexpr GLFWwindow* get_glfw_handle() const noexcept { return handle; }
-        inline RenderContext& get_context() const noexcept { return *context; }
-
-        ~Window() noexcept;
+        glm::ivec2 get_size() const noexcept { return impl->get_size(); }
+        Context& get_context() const noexcept { return impl->get_context(); }
+        std::any get_native_handle() const noexcept { return impl->get_native_handle(); }
 
     private:
-        void on_window_closed() noexcept;
-        void on_window_resized(int width, int height) noexcept;
-        void on_key(int key, int scancode, int action, int mods) noexcept;
-        void on_text_entered(unsigned int codepoint) noexcept;
-        void on_mouse_button(int button, int action, int mods) noexcept;
-        void on_mouse_moved(double x, double y) noexcept;
-        void on_mouse_scrolled(double x_offset, double y_offset) noexcept;
-
-        WindowSettings settings;
-        GLFWwindow* handle;
-        EventBus& event_bus;
-        std::unique_ptr<RenderContext> context;
+        std::unique_ptr<WindowImpl> impl;
     };
 }

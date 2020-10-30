@@ -7,7 +7,7 @@ namespace lv {
     public:
         virtual ~Layer() noexcept = default;
 
-        virtual void init() noexcept {}
+        virtual void init() {}
 
         virtual void pre_update() noexcept {}
         virtual void update() noexcept {}

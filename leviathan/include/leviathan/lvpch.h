@@ -7,10 +7,12 @@
 #endif
 
 #include <algorithm>
+#include <any>
 #include <functional>
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <numeric>
 #include <sstream>
 
 #include <array>
@@ -20,5 +22,4 @@
 #include <unordered_set>
 #include <vector>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>

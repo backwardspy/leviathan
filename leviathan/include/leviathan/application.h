@@ -1,9 +1,9 @@
 #pragma once
 
 #include "events.h"
-#include "window.h"
 #include "input.h"
 #include "layer_stack.h"
+#include "window.h"
 
 namespace lv {
     class Application : public IEventListener {
@@ -11,7 +11,7 @@ namespace lv {
         Application(const Application&&) noexcept = delete;
         void operator=(const Application&&) noexcept = delete;
 
-        int run() noexcept;
+        int run();
         void stop() noexcept;
 
         constexpr const Window& get_window() const noexcept { return window; }
@@ -23,7 +23,7 @@ namespace lv {
         virtual LayerVector get_layers() const = 0;
 
     private:
-        void init() noexcept;
+        void init();
 
         virtual void handle(const Event&) noexcept override;
 

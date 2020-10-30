@@ -4,6 +4,7 @@
 
 #include "application.h"
 
-#include "renderer/render_context.h"
+#include "renderer.h"
+#include "renderer/context.h"
 
 #include "entry_point.h"
