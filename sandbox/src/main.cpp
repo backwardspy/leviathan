@@ -5,15 +5,18 @@ const std::string VertexShaderSource {
     R"glsl(
         #version 460 core
 
-        in vec3 in_position;
+        layout(location = 0) in vec3 in_position;
+        layout(location = 1) in vec4 in_color;
 
         out struct {
-            vec2 position;
+            vec3 position;
+            vec4 color;
         } v2f;
 
         void main() {
             gl_Position = vec4(in_position, 1.0);
-            v2f.position = in_position.xy;
+            v2f.position = in_position;
+            v2f.color = in_color;
         }
     )glsl"
 };
@@ -25,34 +28,42 @@ const std::string PixelShaderSource {
         out vec4 out_colour;
 
         in struct {
-            vec2 position;
+            vec3 position;
+            vec4 color;
         } v2f;
 
         void main() {
-            vec3 col1 = vec3(255.0 / 255.0, 113.0 / 255.0, 206.0 / 255.0);
-            vec3 col2 = vec3(1.0 / 255.0, 205.0 / 255.0, 254.0 / 255.0);
-            out_colour = vec4(mix(col1, col2, -v2f.position.y * 0.2 + v2f.position.x * 2.0), 1.0);
+            out_colour = v2f.color;
         }
     )glsl"
 };
 
 class CustomLayer : public lv::Layer {
 public:
-    CustomLayer(lv::RenderContext& context) :
+    CustomLayer(lv::Context& context) :
         context { context },
         shader { context.create_shader(
             {{lv::Shader::Type::Vertex, VertexShaderSource },
             {lv::Shader::Type::Pixel, PixelShaderSource },}) },
-        vbo { context.create_vertex_buffer({
-            { { 0.0f, 0.5f, 0.0f } },
-            { { 0.5f, -0.4f, 0.0f } },
-            { { -0.5f, -0.4f, 0.0f } },
+        tri { context.create_vertex_array({
+            { { 0.0f, 0.5f, 0.0f }, { 0.7f, 1.0f, 0.0f, 1.0f } },
+            { { 0.5f, -0.4f, 0.0f }, { 0.0f, 0.7f, 1.0f, 1.0f } },
+            { { -0.5f, -0.4f, 0.0f }, { 1.0f, 0.0f, 0.7f, 1.0f } },
         }) },
-        ibo { context.create_index_buffer({ 0, 1, 2 }) }
+        quad { context.create_vertex_array({
+            { { -0.75f, -0.75f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
+            { { 0.75f, -0.75f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
+            { { -0.75f, 0.75f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
+            { { 0.75f, 0.75f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
+        }, {
+            0, 1, 2,
+            1, 3, 2,
+        }) }
     {}
 
     virtual void render() noexcept override {
-        context.draw_indexed(lv::RenderMode::Triangles, *vbo, *ibo, *shader);
+        lv::Renderer::submit(*shader, *quad);
+        lv::Renderer::submit(*shader, *tri);
     }
 
     virtual void gui() noexcept override {
@@ -62,10 +73,9 @@ public:
     }
 
 private:
-    lv::RenderContext& context;
+    lv::Context& context;
     std::unique_ptr<lv::Shader> shader;
-    std::unique_ptr<lv::VertexBuffer> vbo;
-    std::unique_ptr<lv::IndexBuffer> ibo;
+    std::unique_ptr<lv::VertexArray> tri, quad;
 };
 
 class Sandbox : public lv::Application {

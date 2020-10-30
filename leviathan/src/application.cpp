@@ -1,6 +1,7 @@
 #include "leviathan/lvpch.h"
 
 #include "leviathan/application.h"
+#include "leviathan/renderer.h"
 #include "leviathan/log.h"
 
 #include "leviathan/layers/imgui_layer.h"
@@ -9,7 +10,7 @@ namespace lv {
     Application::Application() :
         event_bus {},
         running { false },
-        window { WindowSettings{1280, 800, "Leviathan Application"}, event_bus },
+        window { { { 1280, 800 }, "Leviathan Application"}, event_bus },
         input { event_bus },
         layer_stack { event_bus }
     {
@@ -17,7 +18,7 @@ namespace lv {
 
     Application::~Application() noexcept {}
 
-    int Application::run() noexcept {
+    int Application::run() {
         init();
 
         while (running) {
@@ -29,14 +30,14 @@ namespace lv {
             layer_stack.update();
             layer_stack.post_update();
 
-            window.clear();
+            Renderer::clear();
 
             layer_stack.pre_render();
             layer_stack.render();
             layer_stack.gui();
             layer_stack.post_render();
 
-            window.display();
+            window.present();
 
             input.end_frame();
         }
@@ -48,7 +49,7 @@ namespace lv {
         running = false;
     }
 
-    void Application::init() noexcept {
+    void Application::init() {
         event_bus.add_listener(*this);
         layer_stack.init(with_default_layers(get_layers()));
         running = true;

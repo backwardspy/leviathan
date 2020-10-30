@@ -1,7 +1,7 @@
 #include "leviathan/lvpch.h"
 
 #include "leviathan/exc.h"
-#include "leviathan/platform/opengl/opengl_shader.h"
+#include "leviathan/platform/opengl/renderer/shader.h"
 
 namespace lv {
     namespace opengl {
