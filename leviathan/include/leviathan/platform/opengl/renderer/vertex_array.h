@@ -11,10 +11,10 @@ namespace lv {
         public:
             VertexArray(std::vector<Vertex>&& vertices, std::vector<Index>&& indices);
 
-            virtual void use() noexcept override;
-            inline virtual size_t get_element_count() const noexcept override { return element_count; }
+            void use() noexcept override;
+            inline size_t get_element_count() const noexcept override { return element_count; }
 
-            ~VertexArray() noexcept;
+            ~VertexArray() noexcept override;
 
         private:
             size_t element_count;

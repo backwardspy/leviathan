@@ -8,11 +8,11 @@ namespace lv {
     namespace opengl {
         class Shader : public lv::Shader {
         public:
-            Shader(const lv::Shader::SourceMap& sources);
+            explicit Shader(const lv::Shader::SourceMap& sources);
 
-            virtual void use() noexcept override;
+            void use() noexcept override;
 
-            ~Shader() noexcept;
+            ~Shader() noexcept override;
 
         private:
             GLuint program;

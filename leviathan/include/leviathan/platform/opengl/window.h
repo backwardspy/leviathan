@@ -10,14 +10,14 @@ namespace lv {
         public:
             WindowImpl(WindowSettings&&, EventBus&);
 
-            virtual void update() const noexcept override;
-            virtual void present() const noexcept override;
+            void update() const noexcept override;
+            void present() const noexcept override;
 
-            virtual Context& get_context() const noexcept override { return *context; }
-            virtual glm::ivec2 get_size() const noexcept override { return settings.size; }
-            virtual std::any get_native_handle() const noexcept override { return handle; }
+            Context& get_context() const noexcept override { return *context; }
+            glm::ivec2 get_size() const noexcept override { return settings.size; }
+            std::any get_native_handle() const noexcept override { return handle; }
 
-            ~WindowImpl();
+            ~WindowImpl() override;
 
         private:
             void on_window_closed() noexcept;

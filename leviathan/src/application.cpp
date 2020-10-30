@@ -9,7 +9,6 @@
 namespace lv {
     Application::Application() :
         event_bus {},
-        running { false },
         window { { { 1280, 800 }, "Leviathan Application"}, event_bus },
         input { event_bus },
         layer_stack { event_bus }

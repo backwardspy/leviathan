@@ -19,14 +19,14 @@ namespace lv {
     public:
         virtual void set_clear_color(glm::vec4 color) noexcept = 0;
         virtual void clear() noexcept = 0;
-        virtual void draw_vertex_array(VertexArray&, RenderMode) noexcept = 0;
+        virtual void draw_vertex_array(VertexArray&, RenderMode) = 0;
     };
 
     class RenderBackend {
     public:
         static void set_clear_color(glm::vec4 color) { impl->set_clear_color(color); }
         static void clear() { impl->clear(); }
-        static void draw_vertex_array(VertexArray& va, RenderMode mode) noexcept { impl->draw_vertex_array(va, mode); }
+        static void draw_vertex_array(VertexArray& va, RenderMode mode) { impl->draw_vertex_array(va, mode); }
 
     private:
         static std::unique_ptr<RenderBackendImpl> impl;

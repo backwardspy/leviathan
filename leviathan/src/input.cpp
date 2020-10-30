@@ -3,7 +3,7 @@
 #include "leviathan/input.h"
 
 namespace lv {
-    Input::Input(EventBus& event_bus) noexcept : mouse_x { 0 }, mouse_y { 0 } {
+    Input::Input(EventBus& event_bus) noexcept {
         std::fill(std::begin(cur_keys), std::end(cur_keys), false);
         std::fill(std::begin(prev_keys), std::end(prev_keys), false);
         std::fill(std::begin(cur_buttons), std::end(cur_buttons), false);
@@ -46,7 +46,7 @@ namespace lv {
             case Event::Type::KeyReleased: cur_keys[(size_t) event.key.code] = false; return;
             case Event::Type::ButtonPressed: cur_buttons[(size_t) event.button.code] = true; return;
             case Event::Type::ButtonReleased: cur_buttons[(size_t) event.button.code] = false; return;
-            case Event::Type::MouseMoved: mouse_x = event.mouse.x; mouse_y = event.mouse.y; return;
+            case Event::Type::MouseMoved: mouse_pos = event.mouse.coord; return;
         }
     }
 }

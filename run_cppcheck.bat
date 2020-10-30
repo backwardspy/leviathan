@@ -1,7 +1,11 @@
-cppcheck^
- --enable=all^
- --inconclusive^
- --language=c++^
- -Ileviathan\include^
- -ileviathan\vendor^
- leviathan
+@cppcheck^
+    --enable=all^
+    --inconclusive^
+    --language=c++^
+    --quiet^
+    --suppress=unusedFunction^
+    --suppress=missingIncludeSystem^
+    -Ileviathan\include^
+    -ileviathan\vendor^
+    leviathan^
+    sandbox

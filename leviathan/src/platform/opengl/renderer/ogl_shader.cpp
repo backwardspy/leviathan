@@ -22,9 +22,9 @@ namespace lv {
             }
         }
 
-        Shader::Shader(const lv::Shader::SourceMap& sources) {
+        Shader::Shader(const lv::Shader::SourceMap& sources) :
+            program { glCreateProgram() } {
             std::vector<GLuint> shaders;
-            program = glCreateProgram();
             for (auto& source : sources) {
                 shaders.emplace_back(compile_shader(to_gl_shader_type(source.first), source.second));
                 glAttachShader(program, shaders.back());

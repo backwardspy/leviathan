@@ -7,15 +7,15 @@ namespace lv {
     namespace opengl {
         class Context : public lv::Context {
         public:
-            Context(GLFWwindow* handle) noexcept;
+            explicit Context(GLFWwindow* handle) noexcept;
 
-            virtual bool init() noexcept override;
-            virtual void make_current() noexcept override;
-            virtual void present() noexcept override;
+            bool init() noexcept override;
+            void make_current() noexcept override;
+            void present() noexcept override;
 
-            virtual std::unique_ptr<lv::Shader> create_shader(Shader::SourceMap sources) noexcept override;
-            virtual std::unique_ptr<lv::VertexArray> create_vertex_array(std::vector<Vertex>&& vertices) noexcept override;
-            virtual std::unique_ptr<lv::VertexArray> create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept override;
+            std::unique_ptr<lv::Shader> create_shader(Shader::SourceMap sources) noexcept override;
+            std::unique_ptr<lv::VertexArray> create_vertex_array(std::vector<Vertex>&& vertices) noexcept override;
+            std::unique_ptr<lv::VertexArray> create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept override;
 
         private:
             GLFWwindow* handle;

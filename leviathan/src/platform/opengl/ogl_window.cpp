@@ -6,6 +6,10 @@
 
 namespace lv {
     namespace opengl {
+        constexpr WindowImpl& to_window_ref(void* user_ptr) {
+            return *static_cast<WindowImpl*>(user_ptr);
+        }
+
         WindowImpl::WindowImpl(WindowSettings&& settings, EventBus& event_bus) :
             event_bus { event_bus } {
             Log::core_debug("Initialising GLFW with OpenGL {}.{}.", LVGLVersionMajor, LVGLVersionMinor);
@@ -38,31 +42,31 @@ namespace lv {
 
             Log::core_debug("Setting window callbacks.");
             glfwSetWindowCloseCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_window_closed(args...);
             });
             glfwSetFramebufferSizeCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_window_resized(args...);
             });
             glfwSetKeyCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_key(args...);
             });
             glfwSetCharCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_text_entered(args...);
             });
             glfwSetMouseButtonCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_mouse_button(args...);
             });
             glfwSetCursorPosCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_mouse_moved(args...);
             });
             glfwSetScrollCallback(handle, [] (GLFWwindow* glfw_window, auto... args) {
-                auto& window = *(WindowImpl*) glfwGetWindowUserPointer(glfw_window);
+                auto& window = to_window_ref(glfwGetWindowUserPointer(glfw_window));
                 window.on_mouse_scrolled(args...);
             });
 
@@ -124,11 +128,11 @@ namespace lv {
         }
 
         void WindowImpl::on_mouse_moved(double x, double y) noexcept {
-            event_bus.emplace(mouse_moved_event(x, y));
+            event_bus.emplace(mouse_moved_event({ static_cast<float>(x), static_cast<float>(y) }));
         }
 
         void WindowImpl::on_mouse_scrolled(double x_offset, double y_offset) noexcept {
-            event_bus.emplace(mouse_scrolled_event(x_offset, y_offset));
+            event_bus.emplace(mouse_scrolled_event({ static_cast<float>(x_offset), static_cast<float>(y_offset) }));
         }
     }
 }

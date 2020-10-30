@@ -80,10 +80,10 @@ namespace lv {
             }
 
             Log::core_debug("OpenGL driver strings:");
-            Log::core_debug("*  Vendor: {}", glGetString(GL_VENDOR));
-            Log::core_debug("*  Renderer: {}", glGetString(GL_RENDERER));
-            Log::core_debug("*  Version: {}", glGetString(GL_VERSION));
-            Log::core_debug("*  GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
+            Log::core_debug("* Vendor: {}", glGetString(GL_VENDOR));
+            Log::core_debug("* Renderer: {}", glGetString(GL_RENDERER));
+            Log::core_debug("* Version: {}", glGetString(GL_VERSION));
+            Log::core_debug("* GLSL Version: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 #if defined(DEBUG)
             Log::core_debug("Enabling debug output.");
