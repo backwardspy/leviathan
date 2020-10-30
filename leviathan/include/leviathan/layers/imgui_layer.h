@@ -7,11 +7,11 @@
 namespace lv {
     class ImGuiLayer : public Layer {
     public:
-        ImGuiLayer(const Window&) noexcept;
+        explicit ImGuiLayer(const Window&) noexcept;
 
-        virtual void init() override;
-        virtual void pre_render() noexcept override;
-        virtual void post_render() noexcept override;
+        void init() override;
+        void pre_render() noexcept override;
+        void post_render() noexcept override;
 
     private:
         const Window& window;

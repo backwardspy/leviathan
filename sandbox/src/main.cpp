@@ -40,7 +40,7 @@ const std::string PixelShaderSource {
 
 class CustomLayer : public lv::Layer {
 public:
-    CustomLayer(lv::Context& context) :
+    explicit CustomLayer(lv::Context& context) :
         context { context },
         shader { context.create_shader(
             {{lv::Shader::Type::Vertex, VertexShaderSource },

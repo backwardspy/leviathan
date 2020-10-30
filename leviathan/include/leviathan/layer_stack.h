@@ -8,7 +8,7 @@ namespace lv {
 
     class LayerStack : public IEventListener {
     public:
-        LayerStack(EventBus& event_bus) noexcept;
+        explicit LayerStack(EventBus& event_bus) noexcept;
 
         void init(LayerVector&&) noexcept;
 
@@ -21,7 +21,7 @@ namespace lv {
         void gui() noexcept;
         void post_render() noexcept;
 
-        virtual void handle(const Event&) noexcept override;
+        void handle(const Event&) noexcept override;
 
     private:
         std::vector<std::unique_ptr<Layer>> layers;

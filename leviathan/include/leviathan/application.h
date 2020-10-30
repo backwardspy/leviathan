@@ -25,7 +25,7 @@ namespace lv {
     private:
         void init();
 
-        virtual void handle(const Event&) noexcept override;
+        void handle(const Event&) noexcept override;
 
         LayerVector with_default_layers(LayerVector&&) const;
 
@@ -34,7 +34,7 @@ namespace lv {
         Input input;
         LayerStack layer_stack;
 
-        bool running;
+        bool running = false;
     };
 
     // defined by client

@@ -20,7 +20,7 @@ namespace lv {
             glClear(GL_COLOR_BUFFER_BIT);
         }
 
-        void RenderBackendImpl::draw_vertex_array(VertexArray& va, RenderMode mode) noexcept {
+        void RenderBackendImpl::draw_vertex_array(VertexArray& va, RenderMode mode) {
             glDrawElements(to_gl_mode(mode), (GLsizei) va.get_element_count(), GL_UNSIGNED_INT, nullptr);
         }
     }
