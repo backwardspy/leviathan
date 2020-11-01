@@ -31,7 +31,6 @@ namespace lv {
 
         EventBus event_bus;
         Window window;
-        Input input;
         LayerStack layer_stack;
 
         bool running = false;

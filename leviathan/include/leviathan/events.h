@@ -3,8 +3,16 @@
 #include "lvpch.h"
 #include "keys.h"
 #include "buttons.h"
+#include "enum_bitmask.h"
 
 namespace lv {
+    enum class EventCategory : unsigned int {
+        Window = 1 << 0,
+        Keyboard = 1 << 1,
+        Mouse = 1 << 2,
+    };
+    LV_ENABLE_BITMASK_OPERATORS(EventCategory);
+
     struct Event {
         enum class Type {
             WindowClosed,
@@ -19,12 +27,19 @@ namespace lv {
         };
         Type type;
 
+        EventCategory category;
+
+        bool is_in_category(EventCategory category) const {
+            return (this->category & category) == category;
+        }
+
         struct WindowEvent {
             int width, height;
         };
 
         struct KeyEvent {
             KeyCode code;
+            unsigned int scancode;
             bool shift, control, alt, super;
         };
 
@@ -50,46 +65,46 @@ namespace lv {
     };
 
     constexpr Event window_closed_event() {
-        Event ev { Event::Type::WindowClosed };
+        Event ev { Event::Type::WindowClosed, EventCategory::Window };
         return ev;
     }
     constexpr Event window_resized_event(int width, int height) {
-        Event ev { Event::Type::WindowResized };
+        Event ev { Event::Type::WindowResized, EventCategory::Window };
         ev.window = { width, height };
         return ev;
     }
-    constexpr Event key_pressed_event(KeyCode code, bool shift, bool control, bool alt, bool super) {
-        Event ev { Event::Type::KeyPressed };
-        ev.key = { code, shift, control, alt, super };
+    constexpr Event key_pressed_event(KeyCode code, unsigned int scancode, bool shift, bool control, bool alt, bool super) {
+        Event ev { Event::Type::KeyPressed, EventCategory::Keyboard };
+        ev.key = { code, scancode, shift, control, alt, super };
         return ev;
     }
-    constexpr Event key_released_event(KeyCode code, bool shift, bool control, bool alt, bool super) {
-        Event ev { Event::Type::KeyReleased };
-        ev.key = { code, shift, control, alt, super };
+    constexpr Event key_released_event(KeyCode code, unsigned int scancode, bool shift, bool control, bool alt, bool super) {
+        Event ev { Event::Type::KeyReleased, EventCategory::Keyboard };
+        ev.key = { code, scancode, shift, control, alt, super };
         return ev;
     }
     constexpr Event button_pressed_event(ButtonCode code) {
-        Event ev { Event::Type::ButtonPressed };
+        Event ev { Event::Type::ButtonPressed, EventCategory::Mouse };
         ev.button = { code };
         return ev;
     }
     constexpr Event button_released_event(ButtonCode code) {
-        Event ev { Event::Type::ButtonReleased };
+        Event ev { Event::Type::ButtonReleased, EventCategory::Mouse };
         ev.button = { code };
         return ev;
     }
     constexpr Event mouse_moved_event(glm::vec2 position) {
-        Event ev { Event::Type::MouseMoved };
+        Event ev { Event::Type::MouseMoved, EventCategory::Mouse };
         ev.mouse = { position };
         return ev;
     }
     constexpr Event mouse_scrolled_event(glm::vec2 offset) {
-        Event ev { Event::Type::MouseScrolled };
+        Event ev { Event::Type::MouseScrolled, EventCategory::Mouse };
         ev.mouse = { offset };
         return ev;
     }
     constexpr Event text_entered_event(unsigned int codepoint) {
-        Event ev { Event::Type::TextEntered };
+        Event ev { Event::Type::TextEntered, EventCategory::Keyboard };
         ev.text = { codepoint };
         return ev;
     }

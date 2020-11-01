@@ -5,31 +5,37 @@
 #include "events.h"
 #include "keys.h"
 #include "buttons.h"
+#include "window.h"
 
 namespace lv {
     class Input : public IEventListener {
     public:
-        explicit Input(EventBus& event_bus) noexcept;
+        static void init(EventBus& event_bus, const Window&) noexcept;
 
-        bool is_key_pressed(KeyCode code) const noexcept;
-        bool is_key_just_pressed(KeyCode code) const noexcept;
-        bool is_key_just_released(KeyCode code) const noexcept;
+        static bool is_key_pressed(KeyCode code) noexcept;
+        static bool is_key_just_pressed(KeyCode code) noexcept;
+        static bool is_key_just_released(KeyCode code) noexcept;
 
-        bool is_button_pressed(ButtonCode code) const noexcept;
-        bool is_button_just_pressed(ButtonCode code) const noexcept;
-        bool is_button_just_released(ButtonCode code) const noexcept;
+        static bool is_button_pressed(ButtonCode code) noexcept;
+        static bool is_button_just_pressed(ButtonCode code) noexcept;
+        static bool is_button_just_released(ButtonCode code) noexcept;
 
-        constexpr glm::vec2 get_mouse_pos() const { return mouse_pos; }
+        static glm::vec2 get_mouse_position() noexcept;
 
-        void end_frame() noexcept;
+        static void end_frame() noexcept;
 
         void handle(const Event&) noexcept override;
+    private:
+        explicit Input(EventBus& event_bus, const Window&) noexcept;
 
     private:
+        static std::unique_ptr<Input> instance;
+
+        const Window& window;
+
         static const size_t KeyCodeCount = (size_t) KeyCode::EntryCount;
         static const size_t ButtonCodeCount = (size_t) ButtonCode::EntryCount;
         std::array<bool, KeyCodeCount> cur_keys, prev_keys;
         std::array<bool, ButtonCodeCount> cur_buttons, prev_buttons;
-        glm::vec2 mouse_pos;
     };
 }

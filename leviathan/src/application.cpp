@@ -10,7 +10,6 @@ namespace lv {
     Application::Application() :
         event_bus {},
         window { { { 1280, 800 }, "Leviathan Application"}, event_bus },
-        input { event_bus },
         layer_stack { event_bus }
     {
     }
@@ -38,7 +37,7 @@ namespace lv {
 
             window.present();
 
-            input.end_frame();
+            Input::end_frame();
         }
 
         return 0;
@@ -50,6 +49,7 @@ namespace lv {
 
     void Application::init() {
         event_bus.add_listener(*this);
+        Input::init(event_bus, window);
         layer_stack.init(with_default_layers(get_layers()));
         running = true;
         Log::core_info("Application starting up.");

@@ -59,9 +59,8 @@ namespace lv {
     }
 
     void LayerStack::handle(const Event& event) noexcept {
-        // reverse iterate so "higher" layers handle first
-        for (auto layer = std::rbegin(layers); layer != std::rend(layers); layer++) {
-            if ((*layer)->handle(event)) break;
+        for (auto& layer : layers) {
+            if (layer->handle(event)) break;
         }
     }
 }
