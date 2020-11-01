@@ -17,6 +17,8 @@ namespace lv {
 
         virtual Context& get_context() const noexcept = 0;
         virtual glm::ivec2 get_size() const noexcept = 0;
+        virtual float get_aspect_ratio() const noexcept = 0;
+        virtual glm::vec2 get_mouse_position() const noexcept = 0;
         virtual std::any get_native_handle() const noexcept = 0;
 
         virtual ~WindowImpl() noexcept {}
@@ -33,7 +35,9 @@ namespace lv {
         void present() const noexcept { impl->present(); }
 
         glm::ivec2 get_size() const noexcept { return impl->get_size(); }
+        virtual float get_aspect_ratio() const noexcept { return impl->get_aspect_ratio(); }
         Context& get_context() const noexcept { return impl->get_context(); }
+        glm::vec2 get_mouse_position() const { return impl->get_mouse_position(); }
         std::any get_native_handle() const noexcept { return impl->get_native_handle(); }
 
     private:

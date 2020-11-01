@@ -12,10 +12,18 @@ namespace lv {
 
             void use() noexcept override;
 
+            void set_mat4(const std::string& name, glm::mat4 mat) override;
+
             ~Shader() noexcept override;
 
         private:
+            void build_uniform_cache() noexcept;
+            bool Shader::get_uniform(const std::string& name, GLenum type, std::pair<GLint, GLenum>& uniform);
+
+        private:
             GLuint program;
+
+            std::unordered_map<std::string, std::pair<GLint, GLenum>> uniforms;
         };
     }
 }

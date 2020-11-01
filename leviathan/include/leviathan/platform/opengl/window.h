@@ -14,7 +14,9 @@ namespace lv {
             void present() const noexcept override;
 
             Context& get_context() const noexcept override { return *context; }
-            glm::ivec2 get_size() const noexcept override { return settings.size; }
+            glm::ivec2 get_size() const noexcept override;
+            float get_aspect_ratio() const noexcept override;
+            glm::vec2 get_mouse_position() const noexcept override;
             std::any get_native_handle() const noexcept override { return handle; }
 
             ~WindowImpl() override;
@@ -30,7 +32,6 @@ namespace lv {
 
         private:
             std::unique_ptr<Context> context;
-            WindowSettings settings;
             EventBus& event_bus;
             GLFWwindow* handle;
         };

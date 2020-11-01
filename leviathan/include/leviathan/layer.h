@@ -5,6 +5,7 @@
 namespace lv {
     class Layer {
     public:
+        Layer(std::string&& name) : name { std::move(name) } {}
         virtual ~Layer() noexcept = default;
 
         virtual void init() {}
@@ -19,5 +20,10 @@ namespace lv {
         virtual void post_render() noexcept {}
 
         virtual bool handle(const Event&) noexcept { return false; }
+
+        std::string get_name() const { return name; }
+
+    private:
+        std::string name;
     };
 }

@@ -3,6 +3,7 @@
 #include "leviathan/lvpch.h"
 #include "renderer/shader.h"
 #include "renderer/vertex_array.h"
+#include "renderer/context.h"
 
 namespace lv {
     enum class RenderMode {

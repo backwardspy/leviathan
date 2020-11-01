@@ -14,6 +14,7 @@
 #include <memory>
 #include <numeric>
 #include <sstream>
+#include <type_traits>
 
 #include <array>
 #include <queue>

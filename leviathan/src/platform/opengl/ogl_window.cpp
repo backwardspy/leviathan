@@ -78,6 +78,23 @@ namespace lv {
             }
         }
 
+        glm::ivec2 WindowImpl::get_size() const noexcept {
+            int width, height;
+            glfwGetFramebufferSize(handle, &width, &height);
+            return { width, height };
+        }
+
+        float WindowImpl::get_aspect_ratio() const noexcept {
+            auto size = get_size();
+            return size.x / static_cast<float>(size.y);
+        }
+
+        glm::vec2 WindowImpl::get_mouse_position() const noexcept {
+            double x, y;
+            glfwGetCursorPos(handle, &x, &y);
+            return { static_cast<float>(x), static_cast<float>(y) };
+        }
+
         WindowImpl::~WindowImpl() {
             Log::core_debug("Destroying GLFW window.");
             glfwDestroyWindow(handle);
@@ -100,6 +117,7 @@ namespace lv {
 
         void WindowImpl::on_window_resized(int width, int height) noexcept {
             event_bus.emplace(window_resized_event(width, height));
+            glViewport(0, 0, width, height);
         }
 
         void WindowImpl::on_key(int key, int scancode, int action, int mods) noexcept {
@@ -108,8 +126,8 @@ namespace lv {
             auto alt = (mods & GLFW_MOD_ALT) > 0;
             auto super = (mods & GLFW_MOD_SUPER) > 0;
             switch (action) {
-                case GLFW_PRESS: event_bus.emplace(key_pressed_event((KeyCode) key, shift, control, alt, super)); return;
-                case GLFW_RELEASE: event_bus.emplace(key_released_event((KeyCode) key, shift, control, alt, super)); return;
+                case GLFW_PRESS: event_bus.emplace(key_pressed_event((KeyCode) key, scancode, shift, control, alt, super)); return;
+                case GLFW_RELEASE: event_bus.emplace(key_released_event((KeyCode) key, scancode, shift, control, alt, super)); return;
                 case GLFW_REPEAT: return;
                 default: Log::core_error("Unknown GLFW key action: {}.", action); return;
             }
