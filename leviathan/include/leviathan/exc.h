@@ -21,5 +21,23 @@ namespace lv {
                 return "An enumerator has not been implemented.";
             }
         };
+
+        struct EntityLimitReached : public LeviathanException {
+            const char* what() const override {
+                return "The entity limit has been reached.";
+            }
+        };
+
+        struct EntityNotFound : public LeviathanException {
+            const char* what() const override {
+                return "The specified entity does not exist.";
+            }
+        };
+
+        struct ComponentNotFound : public LeviathanException {
+            const char* what() const override {
+                return "The specified component does not exist.";
+            }
+        };
     }
 }

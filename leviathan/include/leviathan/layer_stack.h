@@ -2,6 +2,7 @@
 
 #include "lvpch.h"
 #include "layer.h"
+#include "core/time.h"
 
 namespace lv {
     using LayerVector = std::vector<std::unique_ptr<Layer>>;
