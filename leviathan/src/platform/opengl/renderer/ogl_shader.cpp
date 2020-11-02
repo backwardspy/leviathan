@@ -100,7 +100,7 @@ namespace lv {
                     program,
                     GL_UNIFORM,
                     idx,
-                    length,
+                    static_cast<GLsizei>(length),
                     nullptr,
                     name_buffer.data()
                 );
