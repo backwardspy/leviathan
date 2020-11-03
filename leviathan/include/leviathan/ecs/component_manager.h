@@ -11,21 +11,21 @@ namespace lv {
         class ComponentManager {
         public:
             template<class T> void register_component() noexcept;
-            template<class T> Component get_component_type() const;
+            template<class T> Component get_component_type() noexcept;
             template<class T> void add_component(Entity, T) noexcept;
             template<class T> void remove_component(Entity) noexcept;
-            template<class T> T& get_component(Entity) const noexcept;
+            template<class T> T& get_component(Entity) noexcept;
             void on_entity_unmade(Entity) noexcept;
 
         private:
             template<class T>
-            ComponentArray<T>& get_component_array() const;
+            ComponentArray<T>& get_component_array() noexcept;
 
         private:
             using ComponentType = size_t;
 
-            template<class T>
-            static constexpr ComponentType component_type() { return static_cast<ComponentType>(typeid(T).hash_code()); }
+            template<class T> static constexpr ComponentType component_type() { return static_cast<ComponentType>(typeid(T).hash_code()); }
+            template<class T> static constexpr const char* component_name() { return typeid(T).name(); }
 
             std::unordered_map<ComponentType, Component> components {};
             std::unordered_map<ComponentType, std::unique_ptr<IComponentArray>> component_arrays {};
@@ -35,22 +35,27 @@ namespace lv {
         template<class T>
         inline void ComponentManager::register_component() noexcept {
             auto type = component_type<T>();
+            auto name = component_name<T>();
 
             if (components.find(type) != std::end(components)) {
-                Log::warn("Attempt to register component type \"{}\" more than once.", typeid(T).name());
+                Log::core_warn("Attempt to register component {} more than once.", name);
                 return;
             }
 
             components[type] = next_component++;
             component_arrays[type] = std::make_unique<ComponentArray<T>>();
+
+            Log::core_debug("Registered component {}.", name);
         }
 
         template<class T>
-        inline Component ComponentManager::get_component_type() const {
+        inline Component ComponentManager::get_component_type() noexcept {
             auto type = component_type<T>();
             auto it = components.find(type);
             if (it == std::end(components)) {
-                throw exc::ComponentNotFound {};
+                Log::core_warn("Attempt to get/add component {} before registering it. Component will be automatically registered.", component_name<T>());
+                register_component<T>();
+                return components.at(type);
             }
             return it->second;
         }
@@ -66,18 +71,22 @@ namespace lv {
         }
 
         template<class T>
-        inline T& ComponentManager::get_component(Entity entity) const noexcept {
+        inline T& ComponentManager::get_component(Entity entity) noexcept {
             return get_component_array<T>().get(entity);
         }
 
         template<class T>
-        inline ComponentArray<T>& ComponentManager::get_component_array() const {
+        inline ComponentArray<T>& ComponentManager::get_component_array() noexcept {
             auto type = component_type<T>();
+            auto name = component_name<T>();
             auto it = component_arrays.find(type);
             if (it == std::end(component_arrays)) {
-                throw exc::ComponentNotFound {};
+                Log::core_warn("Attempt to get/add component \"{}\" before registering it. Component will be automatically registered.", name);
+                register_component<T>();
+                return static_cast<ComponentArray<T>&>(*component_arrays.at(type));
+            } else {
+                return static_cast<ComponentArray<T>&>(*it->second);
             }
-            return (ComponentArray<T>&)(*it->second);
         }
     }
 }

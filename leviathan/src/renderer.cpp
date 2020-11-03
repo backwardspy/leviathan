@@ -1,5 +1,5 @@
 #include "leviathan/lvpch.h"
-#include "leviathan/renderer.h"
+#include "leviathan/renderer/renderer.h"
 
 #include "leviathan/platform/opengl/renderer.h"
 
@@ -11,8 +11,9 @@ namespace lv {
         RenderBackend::clear();
     }
 
-    void Renderer::submit(Shader& shader, VertexArray& va, RenderMode mode) noexcept {
+    void Renderer::submit(Shader& shader, VertexArray& va, glm::mat4 transform, RenderMode mode) noexcept {
         shader.use();
+        shader.set_mat4("Model", transform);
         va.use();
         RenderBackend::draw_vertex_array(va, mode);
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "leviathan/renderer.h"
+#include "leviathan/renderer/renderer.h"
 
 namespace lv {
     namespace opengl {

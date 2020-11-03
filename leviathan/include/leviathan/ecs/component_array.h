@@ -15,6 +15,7 @@ namespace lv {
         template<class T>
         class ComponentArray : public IComponentArray {
         public:
+            ComponentArray() noexcept;
             void add(Entity, T) noexcept;
             void remove(Entity);
             T& get(Entity);
@@ -22,16 +23,19 @@ namespace lv {
             void on_entity_destroyed(Entity) override;
 
         private:
-            std::vector<T> components { MaxEntities };
+            std::vector<T> components;
             std::unordered_map<Entity, size_t> entity_indices;
             std::unordered_map<size_t, Entity> index_entities;
-            size_t size;
+            size_t size {};
         };
+
+        template<class T>
+        inline ComponentArray<T>::ComponentArray() noexcept : components(MaxEntities) {}
 
         template<class T>
         inline void ComponentArray<T>::add(Entity entity, T component) noexcept {
             if (entity_indices.find(entity) != std::end(entity_indices)) {
-                Log::warn("Attempt to add a duplicate component to entity #{}.", entity);
+                Log::core_warn("Attempt to add a duplicate component to entity #{}.", entity);
                 return;
             }
             entity_indices[entity] = size;
@@ -43,7 +47,7 @@ namespace lv {
         template<class T>
         inline void ComponentArray<T>::remove(Entity entity) {
             if (entity_indices.find(entity) == std::end(entity_indices)) {
-                Log::warn("Attempt to remove non-existent component from entity #{}", entity);
+                Log::core_warn("Attempt to remove non-existent component from entity #{}.", entity);
                 return;
             }
 

@@ -9,13 +9,13 @@ namespace lv {
             }
         }
 
-        void SystemManager::on_entity_archetype_changed(Entity entity, Archetype archetype) noexcept {
+        void SystemManager::on_entity_archetype_changed(Entity entity, Archetype entity_archetype) noexcept {
             for (auto const& kv : systems) {
                 auto const& type = kv.first;
                 auto const& system = kv.second;
                 auto const& system_archetype = archetypes[type];
 
-                if ((archetype & system_archetype) == system_archetype) {
+                if ((entity_archetype & system_archetype) == system_archetype) {
                     system->add(entity);
                 } else {
                     system->remove(entity);

@@ -35,7 +35,8 @@ namespace lv {
         float aspect_ratio;
 
         glm::vec3 position { 0, 0, 0 };
-        glm::mat4 v, p;
+        glm::mat4 v { glm::identity<glm::mat4>() };
+        glm::mat4 p { glm::identity<glm::mat4>() };
 
         float ortho_size = 1.0f;
     };

@@ -56,12 +56,12 @@ namespace lv {
             use();
             auto it = uniforms.find(name);
             if (it == std::end(uniforms)) {
-                Log::error("get_uniform: uniform \"{}\" could not be found.", name);
+                Log::core_error("get_uniform: uniform \"{}\" could not be found.", name);
                 return false;
             }
             uniform = it->second;
             if (uniform.second != type) {
-                Log::warn("get_uniform: uniform \"{}\" is not the expected type.", name);
+                Log::core_warn("get_uniform: uniform \"{}\" is not the expected type.", name);
             }
             return true;
         }
@@ -112,9 +112,9 @@ namespace lv {
                 uniforms[name] = std::make_pair(loc, type);
             }
 
-            Log::debug("Cached {} uniform(s):", std::size(uniforms));
+            Log::core_debug("Cached {} uniform(s):", std::size(uniforms));
             for (auto& pair : uniforms) {
-                Log::debug("* {}: {}", pair.first, pair.second.first);
+                Log::core_debug("* {}: {}", pair.first, pair.second.first);
             }
         }
     }

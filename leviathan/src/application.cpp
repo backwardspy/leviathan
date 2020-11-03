@@ -1,18 +1,20 @@
 #include "leviathan/lvpch.h"
 
 #include "leviathan/application.h"
-#include "leviathan/renderer.h"
+#include "leviathan/renderer/renderer.h"
 #include "leviathan/log.h"
 #include "leviathan/core/time.h"
+#include "leviathan/ecs/default_components.h"
 
 #include "leviathan/layers/imgui_layer.h"
 
 namespace lv {
     Application::Application() :
-        event_bus {},
         window { { { 1280, 800 }, "Leviathan Application"}, event_bus },
         layer_stack { event_bus }
     {
+        ecs::register_default_components(ecs);
+        mesh_renderer = ecs.register_system<ecs::MeshRenderer>(ecs::MeshRenderer::get_archetype(ecs), ecs);
     }
 
     Application::~Application() noexcept {}
@@ -38,7 +40,7 @@ namespace lv {
                 layer_stack.update();
                 accumulator -= time::delta_time;
                 if (++steps >= time::max_fixed_steps) {
-                    Log::warn("Simulation is running too slowly, some updates will be skipped!");
+                    Log::core_warn("Simulation is running too slowly, some updates will be skipped!");
                     break;
                 }
             }
@@ -51,6 +53,10 @@ namespace lv {
 
             layer_stack.pre_render();
             layer_stack.render();
+
+            // TODO: this should probably be in a layer
+            mesh_renderer->render();
+
             layer_stack.gui();
             layer_stack.post_render();
 

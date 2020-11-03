@@ -14,7 +14,7 @@ namespace lv {
             event_bus { event_bus } {
             Log::core_debug("Initialising GLFW with OpenGL {}.{}.", LVGLVersionMajor, LVGLVersionMinor);
             if (!glfwInit()) {
-                Log::critical("Failed to initialise GLFW.");
+                Log::core_critical("Failed to initialise GLFW.");
                 throw exc::RenderContextException {};
             }
 

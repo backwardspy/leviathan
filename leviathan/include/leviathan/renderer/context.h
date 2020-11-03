@@ -20,8 +20,8 @@ namespace lv {
         virtual void make_current() noexcept = 0;
         virtual void present() noexcept = 0;
 
-        virtual std::unique_ptr<Shader> create_shader(Shader::SourceMap sources) noexcept = 0;
-        virtual std::unique_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices) noexcept = 0;
-        virtual std::unique_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept = 0;
+        virtual std::shared_ptr<Shader> create_shader(Shader::SourceMap sources) noexcept = 0;
+        virtual std::shared_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices) noexcept = 0;
+        virtual std::shared_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept = 0;
     };
 }

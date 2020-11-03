@@ -102,15 +102,15 @@ namespace lv {
             glfwSwapBuffers(handle);
         }
 
-        std::unique_ptr<lv::Shader> Context::create_shader(Shader::SourceMap sources) noexcept {
+        std::shared_ptr<lv::Shader> Context::create_shader(Shader::SourceMap sources) noexcept {
             return std::make_unique<lv::opengl::Shader>(sources);
         }
 
-        std::unique_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices) noexcept {
+        std::shared_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices) noexcept {
             return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), auto_index(vertices.size()));
         }
 
-        std::unique_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept {
+        std::shared_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept {
             return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), std::move(indices));
         }
     }
