@@ -17,8 +17,8 @@ namespace lv {
             template<class T> void register_component() noexcept;
             template<class T> void add_component(Entity, T) noexcept;
             template<class T> void remove_component(Entity) noexcept;
-            template<class T> T& get_component(Entity) const noexcept;
-            template<class T> Component get_component_type() const noexcept;
+            template<class T> T& get_component(Entity) noexcept;
+            template<class T> Component get_component_type() noexcept;
 #pragma endregion
 
 #pragma region System
@@ -52,12 +52,12 @@ namespace lv {
         }
 
         template<class T>
-        inline T& ECS::get_component(Entity entity) const noexcept {
+        inline T& ECS::get_component(Entity entity) noexcept {
             return component_man.get_component<T>(entity);
         }
 
         template<class T>
-        inline Component ECS::get_component_type() const noexcept {
+        inline Component ECS::get_component_type() noexcept {
             return component_man.get_component_type<T>();
         }
 

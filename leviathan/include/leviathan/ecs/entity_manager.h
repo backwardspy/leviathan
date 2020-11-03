@@ -17,7 +17,7 @@ namespace lv {
 
         private:
             std::queue<Entity> available_entities {};
-            std::vector<Archetype> archetypes { MaxEntities };
+            std::vector<Archetype> archetypes;
             size_t entity_count { 0 };
         };
     }

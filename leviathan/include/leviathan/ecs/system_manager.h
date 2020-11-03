@@ -19,6 +19,9 @@ namespace lv {
             template<class T>
             static constexpr SystemType system_type() { return static_cast<SystemType>(typeid(T).hash_code()); }
 
+            template<class T>
+            static constexpr const char* system_name() { return typeid(T).name(); }
+
             std::unordered_map<SystemType, Archetype> archetypes {};
             std::unordered_map<SystemType, std::shared_ptr<System>> systems {};
         };
@@ -26,8 +29,19 @@ namespace lv {
         template<class T, class... Args>
         inline std::shared_ptr<T> SystemManager::register_system(Archetype archetype, Args&&... args) noexcept {
             auto type = system_type<T>();
+            auto name = system_name<T>();
+
+            if (systems.find(type) != std::end(systems)) {
+                Log::core_warn("Attempt to register duplicate system {}.", name);
+                return std::static_pointer_cast<T>(systems[type]);
+            }
+
             auto system = std::make_shared<T>(std::forward<Args>(args)...);
             systems[type] = system;
+            archetypes[type] = archetype;
+
+            Log::core_debug("Registered system {}.", name);
+
             return system;
         }
     }

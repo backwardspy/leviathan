@@ -37,14 +37,14 @@ namespace lv {
 
     float Camera::get_ortho_size() const noexcept {
         if (mode != Camera::Mode::Orthographic) {
-            Log::warn("get_ortho_size called on non-orthographic camera. This value is likely meaningless.");
+            Log::core_warn("get_ortho_size called on non-orthographic camera. This value is likely meaningless.");
         }
         return ortho_size;
     }
 
     void Camera::set_ortho_size(float size) {
         if (mode != Camera::Mode::Orthographic) {
-            Log::warn("set_ortho_size called on non-orthographic camera. This operation is likely meaningless.");
+            Log::core_warn("set_ortho_size called on non-orthographic camera. This operation is likely meaningless.");
         }
         ortho_size = size;
         calculate_p_matrix();
@@ -61,6 +61,6 @@ namespace lv {
     }
 
     void Camera::calculate_v_matrix() noexcept {
-        v = glm::translate(glm::mat4 { 1.0f }, -position);
+        v = glm::translate(glm::identity<glm::mat4>(), -position);
     }
 }

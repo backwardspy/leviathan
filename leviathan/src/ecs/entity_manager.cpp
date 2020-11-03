@@ -6,7 +6,8 @@
 
 namespace lv {
     namespace ecs {
-        EntityManager::EntityManager() noexcept {
+        EntityManager::EntityManager() noexcept :
+            archetypes(MaxEntities) {
             for (Entity ent = 0; ent < MaxEntities; ++ent) {
                 available_entities.push(ent);
             }
@@ -26,14 +27,14 @@ namespace lv {
 
         void EntityManager::unmake_entity(Entity entity) {
             if (entity >= MaxEntities) {
-                Log::error("unmake: Entity #{} is out of range.", entity);
+                Log::core_error("unmake: Entity #{} is out of range.", entity);
                 return;
             }
 
             auto& archetype = archetypes[static_cast<size_t>(entity)];
 
             if (!archetype.any()) {
-                Log::error("unmake: Entity #{} is already inactive.", entity);
+                Log::core_error("unmake: Entity #{} is already inactive.", entity);
                 return;
             }
 
