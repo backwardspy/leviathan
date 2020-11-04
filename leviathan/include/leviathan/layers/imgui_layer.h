@@ -8,14 +8,14 @@
 namespace lv {
     class ImGuiLayer : public Layer {
     public:
-        explicit ImGuiLayer(const Window&) noexcept;
+        explicit ImGuiLayer(Window const&);
 
         void init() override;
-        void pre_render() noexcept override;
-        void post_render() noexcept override;
-        bool handle(const Event&) noexcept override;
+        void pre_render() override;
+        void post_render() override;
+        bool handle(Event const&) override;
 
     private:
-        const Window& window;
+        Window const& window;
     };
 }

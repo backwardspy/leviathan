@@ -6,21 +6,24 @@
 #include "window.h"
 #include "ecs/ecs.h"
 #include "ecs/default_systems.h"
+#include "core/noncopyable.h"
 
 namespace lv {
-    class Application : public IEventListener {
+    class Application : public IEventListener, public NonCopyable {
     public:
-        Application(const Application&&) noexcept = delete;
-        void operator=(const Application&&) noexcept = delete;
-
         int run();
-        void stop() noexcept;
+        void stop();
 
-        constexpr Window& get_window() { return window; }
-        Context& get_render_context() { return window.get_context(); }
-        constexpr ecs::ECS& get_ecs() { return ecs; }
+        constexpr Window const& get_window() const { return window; }
+        constexpr Window& get_window() { return window; }  // cppcheck-suppress functionConst
 
-        virtual ~Application() noexcept;
+        Context const& get_render_context() const { return window.get_context(); }
+        Context& get_render_context() { return window.get_context(); }  // cppcheck-suppress functionConst
+
+        constexpr ecs::ECS const& get_ecs() const { return ecs; }
+        constexpr ecs::ECS& get_ecs() { return ecs; }   // cppcheck-suppress functionConst
+
+        virtual ~Application() = default;
 
     protected:
         Application();
@@ -32,7 +35,7 @@ namespace lv {
 
     private:
         void init();
-        void handle(const Event&) noexcept override;
+        void handle(Event const&) override;
 
         LayerVector with_default_layers(LayerVector&&) const;
 

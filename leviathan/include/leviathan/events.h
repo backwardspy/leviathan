@@ -111,21 +111,20 @@ namespace lv {
 
     class IEventListener {
     public:
-        virtual void handle(const Event&) noexcept = 0;
+        virtual void handle(Event const&) = 0;
 
-        virtual ~IEventListener() noexcept;
+        virtual ~IEventListener() = default;
     };
 
     class EventBus {
     public:
-        EventBus() noexcept;
-
-        void add_listener(IEventListener&) noexcept;
-        void emplace(Event&&) noexcept;
-        void drain() noexcept;
+        void add_listener(IEventListener&);
+        void push(Event&&);
+        void drain();
 
     private:
-        std::queue<Event> events;
-        std::vector<std::reference_wrapper<IEventListener>> listeners;
+        std::queue<Event> events {};
+        // TODO: is reference_wrapper the right thing to use here?
+        std::vector<std::reference_wrapper<IEventListener>> listeners {};
     };
 }

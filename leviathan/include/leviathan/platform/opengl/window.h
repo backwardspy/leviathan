@@ -10,25 +10,25 @@ namespace lv {
         public:
             WindowImpl(WindowSettings&&, EventBus&);
 
-            void update() const noexcept override;
-            void present() const noexcept override;
+            void update() const override;
+            void present() const override;
 
-            Context& get_context() const noexcept override { return *context; }
-            glm::ivec2 get_size() const noexcept override;
-            float get_aspect_ratio() const noexcept override;
-            glm::vec2 get_mouse_position() const noexcept override;
-            std::any get_native_handle() const noexcept override { return handle; }
+            Context& get_context() const override { return *context; }
+            glm::ivec2 get_size() const override;
+            float get_aspect_ratio() const override;
+            glm::vec2 get_mouse_position() const override;
+            std::any get_native_handle() const override { return handle; }
 
             ~WindowImpl() override;
 
         private:
-            void on_window_closed() noexcept;
-            void on_window_resized(int width, int height) noexcept;
-            void on_key(int key, int scancode, int action, int mods) noexcept;
-            void on_text_entered(unsigned int codepoint) noexcept;
-            void on_mouse_button(int button, int action, int mods) noexcept;
-            void on_mouse_moved(double x, double y) noexcept;
-            void on_mouse_scrolled(double x_offset, double y_offset) noexcept;
+            void on_window_closed();
+            void on_window_resized(int width, int height);
+            void on_key(int key, int scancode, int action, int mods);
+            void on_text_entered(unsigned int codepoint);
+            void on_mouse_button(int button, int action, int mods);
+            void on_mouse_moved(double x, double y);
+            void on_mouse_scrolled(double x_offset, double y_offset);
 
         private:
             std::unique_ptr<Context> context;

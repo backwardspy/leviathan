@@ -7,7 +7,7 @@ namespace lv {
     namespace ecs {
         class IComponentArray {
         public:
-            virtual void on_entity_destroyed(Entity) = 0;
+            virtual void on_entity_unmade(Entity) = 0;
 
             virtual ~IComponentArray() = default;
         };
@@ -15,25 +15,28 @@ namespace lv {
         template<class T>
         class ComponentArray : public IComponentArray {
         public:
-            ComponentArray() noexcept;
-            void add(Entity, T) noexcept;
-            void remove(Entity);
-            T& get(Entity);
+            ComponentArray();
 
-            void on_entity_destroyed(Entity) override;
+            void add(Entity, T);
+            void remove(Entity);
+
+            T& operator[](Entity);
+            T const& operator[](Entity) const;
+
+            void on_entity_unmade(Entity) override;
 
         private:
             std::vector<T> components;
             std::unordered_map<Entity, size_t> entity_indices;
             std::unordered_map<size_t, Entity> index_entities;
-            size_t size {};
+            size_t size = 0;
         };
 
         template<class T>
-        inline ComponentArray<T>::ComponentArray() noexcept : components(MaxEntities) {}
+        inline ComponentArray<T>::ComponentArray() : components(MaxEntities) {}
 
         template<class T>
-        inline void ComponentArray<T>::add(Entity entity, T component) noexcept {
+        inline void ComponentArray<T>::add(Entity entity, T component) {
             if (entity_indices.find(entity) != std::end(entity_indices)) {
                 Log::core_warn("Attempt to add a duplicate component to entity #{}.", entity);
                 return;
@@ -66,17 +69,21 @@ namespace lv {
         }
 
         template<class T>
-        inline T& ComponentArray<T>::get(Entity entity) {
+        inline T& ComponentArray<T>::operator[](Entity entity) {
             auto it = entity_indices.find(entity);
-            if (it == std::end(entity_indices)) {
-                throw exc::EntityNotFound { };
-            }
-
+            if (it == std::end(entity_indices)) throw exc::EntityNotFound { };
             return components[it->second];
         }
 
         template<class T>
-        inline void ComponentArray<T>::on_entity_destroyed(Entity entity) {
+        inline T const& ComponentArray<T>::operator[](Entity entity) const {
+            auto it = entity_indices.find(entity);
+            if (it == std::end(entity_indices)) throw exc::EntityNotFound { };
+            return components[it->second];
+        }
+
+        template<class T>
+        inline void ComponentArray<T>::on_entity_unmade(Entity entity) {
             // TODO: validate it exists to suppress warnings?
             remove(entity);
         }

@@ -14,18 +14,18 @@ namespace lv {
         return cam;
     }
 
-    Camera::Camera(Camera::Mode mode, float aspect_ratio) noexcept :
+    Camera::Camera(Camera::Mode mode, float aspect_ratio) :
         mode { mode },
         aspect_ratio { aspect_ratio } {
         calculate_v_matrix();
     }
 
-    void Camera::set_position(glm::vec3 position) noexcept {
+    void Camera::set_position(glm::vec3 position) {
         this->position = position;
         calculate_v_matrix();
     }
 
-    void Camera::translate(glm::vec3 translation) noexcept {
+    void Camera::translate(glm::vec3 translation) {
         position += translation;
         calculate_v_matrix();
     }
@@ -35,7 +35,7 @@ namespace lv {
         calculate_p_matrix();
     }
 
-    float Camera::get_ortho_size() const noexcept {
+    float Camera::get_ortho_size() const {
         if (mode != Camera::Mode::Orthographic) {
             Log::core_warn("get_ortho_size called on non-orthographic camera. This value is likely meaningless.");
         }
@@ -60,7 +60,7 @@ namespace lv {
         }
     }
 
-    void Camera::calculate_v_matrix() noexcept {
+    void Camera::calculate_v_matrix() {
         v = glm::translate(glm::identity<glm::mat4>(), -position);
     }
 }

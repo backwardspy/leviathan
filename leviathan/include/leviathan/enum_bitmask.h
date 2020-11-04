@@ -7,9 +7,9 @@
 namespace lv {
     template<typename Enum>
     struct EnableBitMaskOperators {
-        static const bool enable = false;
+        static bool const enable = false;
     };
-#define LV_ENABLE_BITMASK_OPERATORS(x) template<> struct EnableBitMaskOperators<x> { static const bool enable = true; };
+#define LV_ENABLE_BITMASK_OPERATORS(x) template<> struct EnableBitMaskOperators<x> { static bool const enable = true; };
 
     template<class Enum>
     typename std::enable_if<EnableBitMaskOperators<Enum>::enable, Enum>::type operator |(Enum lhs, Enum rhs) {

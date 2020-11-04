@@ -18,7 +18,7 @@ namespace lv {
                 throw exc::RenderContextException {};
             }
 
-            glfwSetErrorCallback([] (int code, const char* description) {
+            glfwSetErrorCallback([] (int code, char const* const description) {
                 Log::core_error("GLFW error {}: {}.", code, description);
             });
 
@@ -78,18 +78,18 @@ namespace lv {
             }
         }
 
-        glm::ivec2 WindowImpl::get_size() const noexcept {
+        glm::ivec2 WindowImpl::get_size() const {
             int width, height;
             glfwGetFramebufferSize(handle, &width, &height);
             return { width, height };
         }
 
-        float WindowImpl::get_aspect_ratio() const noexcept {
+        float WindowImpl::get_aspect_ratio() const {
             auto size = get_size();
             return size.x / static_cast<float>(size.y);
         }
 
-        glm::vec2 WindowImpl::get_mouse_position() const noexcept {
+        glm::vec2 WindowImpl::get_mouse_position() const {
             double x, y;
             glfwGetCursorPos(handle, &x, &y);
             return { static_cast<float>(x), static_cast<float>(y) };
@@ -103,54 +103,54 @@ namespace lv {
             glfwTerminate();
         }
 
-        void WindowImpl::update() const noexcept {
+        void WindowImpl::update() const {
             glfwPollEvents();
         }
 
-        void WindowImpl::present() const noexcept {
+        void WindowImpl::present() const {
             context->present();
         }
 
-        void WindowImpl::on_window_closed() noexcept {
-            event_bus.emplace(window_closed_event());
+        void WindowImpl::on_window_closed() {
+            event_bus.push(window_closed_event());
         }
 
-        void WindowImpl::on_window_resized(int width, int height) noexcept {
-            event_bus.emplace(window_resized_event(width, height));
+        void WindowImpl::on_window_resized(int width, int height) {
+            event_bus.push(window_resized_event(width, height));
             glViewport(0, 0, width, height);
         }
 
-        void WindowImpl::on_key(int key, int scancode, int action, int mods) noexcept {
+        void WindowImpl::on_key(int key, int scancode, int action, int mods) {
             auto shift = (mods & GLFW_MOD_SHIFT) > 0;
             auto control = (mods & GLFW_MOD_CONTROL) > 0;
             auto alt = (mods & GLFW_MOD_ALT) > 0;
             auto super = (mods & GLFW_MOD_SUPER) > 0;
             switch (action) {
-                case GLFW_PRESS: event_bus.emplace(key_pressed_event((KeyCode) key, scancode, shift, control, alt, super)); return;
-                case GLFW_RELEASE: event_bus.emplace(key_released_event((KeyCode) key, scancode, shift, control, alt, super)); return;
+                case GLFW_PRESS: event_bus.push(key_pressed_event((KeyCode) key, scancode, shift, control, alt, super)); return;
+                case GLFW_RELEASE: event_bus.push(key_released_event((KeyCode) key, scancode, shift, control, alt, super)); return;
                 case GLFW_REPEAT: return;
                 default: Log::core_error("Unknown GLFW key action: {}.", action); return;
             }
         }
 
-        void WindowImpl::on_text_entered(unsigned int codepoint) noexcept {
-            event_bus.emplace(text_entered_event(codepoint));
+        void WindowImpl::on_text_entered(unsigned int codepoint) {
+            event_bus.push(text_entered_event(codepoint));
         }
 
-        void WindowImpl::on_mouse_button(int button, int action, int mods) noexcept {
+        void WindowImpl::on_mouse_button(int button, int action, int mods) {
             switch (action) {
-                case GLFW_PRESS: event_bus.emplace(button_pressed_event((ButtonCode) button)); return;
-                case GLFW_RELEASE: event_bus.emplace(button_released_event((ButtonCode) button)); return;
+                case GLFW_PRESS: event_bus.push(button_pressed_event((ButtonCode) button)); return;
+                case GLFW_RELEASE: event_bus.push(button_released_event((ButtonCode) button)); return;
                 default: Log::core_error("Unknown GLFW mouse button action: {}.", action); return;
             }
         }
 
-        void WindowImpl::on_mouse_moved(double x, double y) noexcept {
-            event_bus.emplace(mouse_moved_event({ static_cast<float>(x), static_cast<float>(y) }));
+        void WindowImpl::on_mouse_moved(double x, double y) {
+            event_bus.push(mouse_moved_event({ static_cast<float>(x), static_cast<float>(y) }));
         }
 
-        void WindowImpl::on_mouse_scrolled(double x_offset, double y_offset) noexcept {
-            event_bus.emplace(mouse_scrolled_event({ static_cast<float>(x_offset), static_cast<float>(y_offset) }));
+        void WindowImpl::on_mouse_scrolled(double x_offset, double y_offset) {
+            event_bus.push(mouse_scrolled_event({ static_cast<float>(x_offset), static_cast<float>(y_offset) }));
         }
     }
 }

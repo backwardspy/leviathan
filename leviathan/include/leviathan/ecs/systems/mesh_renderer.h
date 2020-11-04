@@ -6,10 +6,10 @@ namespace lv {
     namespace ecs {
         class MeshRenderer : public System {
         public:
-            MeshRenderer(ecs::ECS&);
-            void render() const noexcept;
+            explicit MeshRenderer(ecs::ECS&);
+            void render() const;
 
-            static Archetype get_archetype(ECS& ecs) noexcept;
+            static Archetype get_archetype(ECS& ecs);
 
         private:
             ecs::ECS& ecs;

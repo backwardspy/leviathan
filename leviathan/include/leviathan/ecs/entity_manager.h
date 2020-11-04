@@ -8,17 +8,17 @@ namespace lv {
     namespace ecs {
         class EntityManager {
         public:
-            EntityManager() noexcept;
+            EntityManager();
 
             Entity make_entity();
             void unmake_entity(Entity);
-            void set_archetype(Entity entity, Archetype archetype) noexcept;
-            Archetype get_archetype(Entity entity) const noexcept;
+            void set_archetype(Entity entity, Archetype const& archetype);
+            Archetype get_archetype(Entity entity) const;
 
         private:
             std::queue<Entity> available_entities {};
-            std::vector<Archetype> archetypes;
-            size_t entity_count { 0 };
+            std::vector<Archetype> archetypes = std::vector<Archetype>(MaxEntities);
+            size_t entity_count = 0;
         };
     }
 }

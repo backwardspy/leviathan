@@ -6,21 +6,21 @@
 namespace lv {
     class Layer {
     public:
-        Layer(std::string&& name) : name { std::move(name) } {}
-        virtual ~Layer() noexcept = default;
+        explicit Layer(std::string&& name) : name { std::move(name) } {}
+        virtual ~Layer() = default;
 
         virtual void init() {}
 
-        virtual void pre_update() noexcept {}
-        virtual void update() noexcept {}
-        virtual void post_update() noexcept {}
+        virtual void pre_update() {}
+        virtual void update() {}
+        virtual void post_update() {}
 
-        virtual void pre_render() noexcept {}
-        virtual void gui() noexcept {}
-        virtual void render() noexcept {}
-        virtual void post_render() noexcept {}
+        virtual void pre_render() {}
+        virtual void gui() {}
+        virtual void render() {}
+        virtual void post_render() {}
 
-        virtual bool handle(const Event&) noexcept { return false; }
+        virtual bool handle(Event const&) { return false; }
 
         std::string get_name() const { return name; }
 

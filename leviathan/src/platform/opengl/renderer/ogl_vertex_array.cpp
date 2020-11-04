@@ -15,7 +15,7 @@ namespace lv {
             }
         }
 
-        VertexArray::VertexArray(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) : element_count { indices.size() } {
+        VertexArray::VertexArray(std::vector<Vertex> const&& vertices, std::vector<Index> const&& indices) : element_count { indices.size() } {
             glCreateVertexArrays(1, &vao);
             glBindVertexArray(vao);
 
@@ -33,7 +33,7 @@ namespace lv {
                     to_gl_type(element.type),
                     GL_FALSE,
                     sizeof(Vertex),
-                    (const void*) offset
+                    (void const* const) offset
                 );
                 position++;
                 offset += element.size;
@@ -49,13 +49,13 @@ namespace lv {
             glBindVertexArray(0);
         }
 
-        VertexArray::~VertexArray() noexcept {
+        VertexArray::~VertexArray() {
             glDeleteVertexArrays(1, &vao); vao = 0;
             glDeleteBuffers(1, &vbo); vbo = 0;
             glDeleteBuffers(1, &ibo); ibo = 0;
         }
 
-        void VertexArray::use() noexcept {
+        void VertexArray::use() {
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);

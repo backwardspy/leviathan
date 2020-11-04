@@ -1,6 +1,6 @@
 #include "leviathan/lvpch.h"
 #include "leviathan/platform/opengl/opengl.h"
-#include "leviathan/platform/opengl/renderer.h"
+#include "leviathan/platform/opengl/renderer/renderer.h"
 #include "leviathan/exc.h"
 
 namespace lv {
@@ -12,11 +12,11 @@ namespace lv {
             }
         }
 
-        void RenderBackendImpl::set_clear_color(glm::vec4 color) noexcept {
+        void RenderBackendImpl::set_clear_color(glm::vec4 color) {
             glClearColor(color.r, color.g, color.b, color.a);
         }
 
-        void RenderBackendImpl::clear() noexcept {
+        void RenderBackendImpl::clear() {
             glClear(GL_COLOR_BUFFER_BIT);
         }
 

@@ -6,8 +6,7 @@
 
 namespace lv {
     namespace ecs {
-        EntityManager::EntityManager() noexcept :
-            archetypes(MaxEntities) {
+        EntityManager::EntityManager() {
             for (Entity ent = 0; ent < MaxEntities; ++ent) {
                 available_entities.push(ent);
             }
@@ -44,11 +43,11 @@ namespace lv {
             --entity_count;
         }
 
-        void EntityManager::set_archetype(Entity entity, Archetype archetype) noexcept {
+        void EntityManager::set_archetype(Entity entity, Archetype const& archetype) {
             archetypes[static_cast<size_t>(entity)] = archetype;
         }
 
-        Archetype EntityManager::get_archetype(Entity entity) const noexcept {
+        Archetype EntityManager::get_archetype(Entity entity) const {
             return archetypes[static_cast<size_t>(entity)];
         }
     }

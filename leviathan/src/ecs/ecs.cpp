@@ -3,11 +3,11 @@
 
 namespace lv {
     namespace ecs {
-        Entity ECS::make_entity() noexcept {
+        Entity ECS::make_entity() {
             return entity_man.make_entity();
         }
 
-        void ECS::unmake_entity(Entity entity) noexcept {
+        void ECS::unmake_entity(Entity entity) {
             entity_man.unmake_entity(entity);
             component_man.on_entity_unmade(entity);
             system_man.on_entity_unmade(entity);

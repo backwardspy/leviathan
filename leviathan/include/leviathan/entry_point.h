@@ -5,7 +5,7 @@
 
 extern std::unique_ptr<lv::Application> lv::CreateApplication();
 
-int main(int argc, const char* const argv[]) noexcept {
+int main(int argc, char const* const argv[]) {
     try {
         auto app = lv::CreateApplication();
         return app->run();

@@ -11,10 +11,10 @@ namespace lv {
             Trace, Debug, Info, Warn, Error, Critical
         };
 
-        Log(const Log&&) = delete;
-        void operator =(const Log&&) = delete;
+        Log(Log const&&) = delete;
+        void operator =(Log const&&) = delete;
 
-        static Log& log() noexcept;
+        static Log& log();
 
         // configuration
         static void set_level(Level level) { log().client->set_level(to_spdlog_level(level)); }
@@ -22,50 +22,50 @@ namespace lv {
 
         // client application logger
         template<class... Args>
-        static void trace(Args... args) noexcept { log().client->trace(args...); }
+        static void trace(Args... args) { log().client->trace(args...); }
 
         template<class... Args>
-        static void debug(Args... args) noexcept { log().client->debug(args...); }
+        static void debug(Args... args) { log().client->debug(args...); }
 
         template<class... Args>
-        static void info(Args... args) noexcept { log().client->info(args...); }
+        static void info(Args... args) { log().client->info(args...); }
 
         template<class... Args>
-        static void warn(Args... args) noexcept { log().client->warn(args...); }
+        static void warn(Args... args) { log().client->warn(args...); }
 
         template<class... Args>
-        static void error(Args... args) noexcept { log().client->error(args...); }
+        static void error(Args... args) { log().client->error(args...); }
 
         template<class... Args>
-        static void critical(Args... args) noexcept { log().client->critical(args...); }
+        static void critical(Args... args) { log().client->critical(args...); }
 
         template<class... Args>
         static void log(Level level, Args... args) { log().client->log(to_spdlog_level(level), args...); }
 
         // engine logger
         template<class... Args>
-        static void core_trace(Args... args) noexcept { log().core->trace(args...); }
+        static void core_trace(Args... args) { log().core->trace(args...); }
 
         template<class... Args>
-        static void core_debug(Args... args) noexcept { log().core->debug(args...); }
+        static void core_debug(Args... args) { log().core->debug(args...); }
 
         template<class... Args>
-        static void core_info(Args... args) noexcept { log().core->info(args...); }
+        static void core_info(Args... args) { log().core->info(args...); }
 
         template<class... Args>
-        static void core_warn(Args... args) noexcept { log().core->warn(args...); }
+        static void core_warn(Args... args) { log().core->warn(args...); }
 
         template<class... Args>
-        static void core_error(Args... args) noexcept { log().core->error(args...); }
+        static void core_error(Args... args) { log().core->error(args...); }
 
         template<class... Args>
-        static void core_critical(Args... args) noexcept { log().core->critical(args...); }
+        static void core_critical(Args... args) { log().core->critical(args...); }
 
         template<class... Args>
         static void core_log(Level level, Args... args) { log().core->log(to_spdlog_level(level), args...); }
 
     private:
-        Log() noexcept;
+        Log();
 
         static constexpr spdlog::level::level_enum to_spdlog_level(Level level) {
             switch (level) {

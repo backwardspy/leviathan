@@ -9,12 +9,12 @@ namespace lv {
     namespace opengl {
         class VertexArray : public lv::VertexArray {
         public:
-            VertexArray(std::vector<Vertex>&& vertices, std::vector<Index>&& indices);
+            VertexArray(std::vector<Vertex> const&& vertices, std::vector<Index> const&& indices);
 
-            void use() noexcept override;
-            inline size_t get_element_count() const noexcept override { return element_count; }
+            void use() override;
+            size_t get_element_count() const override { return element_count; }
 
-            ~VertexArray() noexcept override;
+            ~VertexArray() override;
 
         private:
             size_t element_count;
