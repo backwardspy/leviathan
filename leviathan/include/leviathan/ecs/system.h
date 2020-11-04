@@ -7,10 +7,10 @@ namespace lv {
     namespace ecs {
         class System {
         public:
-            const void add(Entity entity) { entities.insert(entity); }
-            const void remove(Entity entity) { entities.erase(entity); }
+            void add(Entity entity) { entities.insert(entity); }
+            void remove(Entity entity) { entities.erase(entity); }
 
-            virtual ~System() noexcept = default;
+            virtual ~System() = default;
 
         protected:
             std::set<Entity> entities;

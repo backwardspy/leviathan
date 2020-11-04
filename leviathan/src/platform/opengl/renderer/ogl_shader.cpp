@@ -8,10 +8,10 @@
 
 namespace lv {
     namespace opengl {
-        GLuint compile_shader(GLenum type, const std::string& source) noexcept {
+        GLuint compile_shader(GLenum type, std::string const& source) {
             auto shader = glCreateShader(type);
-            const char* sources[] = { source.c_str() };
-            const GLint source_lengths[] = { (GLint) source.length() };
+            char const* const sources[] = { source.c_str() };
+            GLint const source_lengths[] = { (GLint) source.length() };
             glShaderSource(shader, 1, sources, source_lengths);
             glCompileShader(shader);
             return shader;
@@ -25,7 +25,7 @@ namespace lv {
             }
         }
 
-        Shader::Shader(const lv::Shader::SourceMap& sources) :
+        Shader::Shader(lv::Shader::SourceMap const& sources) :
             program { glCreateProgram() } {
             std::vector<GLuint> shaders;
             for (auto& source : sources) {
@@ -43,16 +43,16 @@ namespace lv {
             build_uniform_cache();
         }
 
-        Shader::~Shader() noexcept {
+        Shader::~Shader() {
             glDeleteProgram(program);
             program = 0;
         }
 
-        void Shader::use() noexcept {
+        void Shader::use() {
             glUseProgram(program);
         }
 
-        bool Shader::get_uniform(const std::string& name, GLenum type, std::pair<GLint, GLenum>& uniform) {
+        bool Shader::get_uniform(std::string const& name, GLenum type, std::pair<GLint, GLenum>& uniform) {
             use();
             auto it = uniforms.find(name);
             if (it == std::end(uniforms)) {
@@ -66,17 +66,23 @@ namespace lv {
             return true;
         }
 
-        void Shader::set_mat4(const std::string& name, glm::mat4 mat) {
+        void Shader::set_mat4(std::string const& name, glm::mat4 mat) {
             std::pair<GLint, GLenum> uniform;
             if (!get_uniform(name, GL_FLOAT_MAT4, uniform)) return;
             glUniformMatrix4fv(uniform.first, 1, GL_FALSE, glm::value_ptr(mat));
         }
 
-        void Shader::build_uniform_cache() noexcept {
+        void Shader::set_vec4(std::string const& name, glm::vec4 vec) {
+            std::pair<GLint, GLenum> uniform;
+            if (!get_uniform(name, GL_FLOAT_VEC4, uniform)) return;
+            glUniform4fv(uniform.first, 1, glm::value_ptr(vec));
+        }
+
+        void Shader::build_uniform_cache() {
             GLint active_uniforms;
             glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniforms);
 
-            const GLenum props[] { GL_NAME_LENGTH, GL_LOCATION, GL_TYPE };
+            GLenum const props[] { GL_NAME_LENGTH, GL_LOCATION, GL_TYPE };
             auto prop_count = std::size(props);
             std::vector<GLint> values(prop_count);
 

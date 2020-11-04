@@ -5,6 +5,7 @@
     --quiet^
     --suppress=unusedFunction^
     --suppress=missingIncludeSystem^
+    --inline-suppr^
     -Ileviathan\include^
     -ileviathan\vendor^
     leviathan^

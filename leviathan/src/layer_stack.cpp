@@ -4,11 +4,11 @@
 #include "leviathan/log.h"
 
 namespace lv {
-    LayerStack::LayerStack(EventBus& event_bus) noexcept {
+    LayerStack::LayerStack(EventBus& event_bus) {
         event_bus.add_listener(*this);
     }
 
-    void LayerStack::init(LayerVector&& app_layers) noexcept {
+    void LayerStack::init(LayerVector&& app_layers) {
         layers = std::move(app_layers);
         for (auto& layer : layers) {
             layer->init();
@@ -16,49 +16,49 @@ namespace lv {
         Log::core_info("Layer stack initialised with {} layer(s).", layers.size());
     }
 
-    void LayerStack::pre_update() noexcept {
+    void LayerStack::pre_update() {
         for (auto& layer : layers) {
             layer->pre_update();
         }
     }
 
-    void LayerStack::update() noexcept {
+    void LayerStack::update() {
         for (auto& layer : layers) {
             layer->update();
         }
     }
 
-    void LayerStack::post_update() noexcept {
+    void LayerStack::post_update() {
         for (auto& layer : layers) {
             layer->post_update();
         }
     }
 
-    void LayerStack::pre_render() noexcept {
+    void LayerStack::pre_render() {
         for (auto& layer : layers) {
             layer->pre_render();
         }
     }
 
-    void LayerStack::render() noexcept {
+    void LayerStack::render() {
         for (auto& layer : layers) {
             layer->render();
         }
     }
 
-    void LayerStack::gui() noexcept {
+    void LayerStack::gui() {
         for (auto& layer : layers) {
             layer->gui();
         }
     }
 
-    void LayerStack::post_render() noexcept {
+    void LayerStack::post_render() {
         for (auto& layer : layers) {
             layer->post_render();
         }
     }
 
-    void LayerStack::handle(const Event& event) noexcept {
+    void LayerStack::handle(Event const& event) {
         for (auto& layer : layers) {
             if (layer->handle(event)) break;
         }

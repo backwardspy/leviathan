@@ -1,9 +1,9 @@
 #pragma once
 
 #include "leviathan/lvpch.h"
-#include "shader.h"
 #include "vertex_array.h"
 #include "context.h"
+#include "material.h"
 
 namespace lv {
     enum class RenderMode {
@@ -12,14 +12,14 @@ namespace lv {
 
     class Renderer {
     public:
-        static void clear(glm::vec4 color = glm::vec4(0, 0, 0, 1)) noexcept;
-        static void submit(Shader&, VertexArray&, glm::mat4 transform, RenderMode = RenderMode::Triangles) noexcept;
+        static void clear(glm::vec4 color = glm::vec4(0, 0, 0, 1));
+        static void submit(Material&, VertexArray&, glm::mat4 transform, RenderMode = RenderMode::Triangles);
     };
 
     class RenderBackendImpl {
     public:
-        virtual void set_clear_color(glm::vec4 color) noexcept = 0;
-        virtual void clear() noexcept = 0;
+        virtual void set_clear_color(glm::vec4 color) = 0;
+        virtual void clear() = 0;
         virtual void draw_vertex_array(VertexArray&, RenderMode) = 0;
     };
 

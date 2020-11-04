@@ -8,10 +8,10 @@
 
 namespace lv {
     namespace opengl {
-        Context::Context(GLFWwindow* handle) noexcept : handle { handle } {}
+        Context::Context(GLFWwindow* handle) : handle { handle } {}
 
 #if defined(DEBUG)
-        const char* gl_debug_source_name(GLenum source) {
+        char const* const gl_debug_source_name(GLenum source) {
             switch (source) {
                 case GL_DEBUG_SOURCE_API: return "API";
                 case GL_DEBUG_SOURCE_APPLICATION: return "Application";
@@ -23,7 +23,7 @@ namespace lv {
             }
         }
 
-        const char* gl_debug_type_name(GLenum type) {
+        char const* const gl_debug_type_name(GLenum type) {
             switch (type) {
                 case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Deprecated behaviour";
                 case GL_DEBUG_TYPE_ERROR: return "Error";
@@ -38,8 +38,8 @@ namespace lv {
             GLuint id,
             GLenum severity,
             GLsizei length,
-            const GLchar* message,
-            const void* user_param
+            GLchar const* const message,
+            void const* const user_param
         ) {
             Log::Level level;
             switch (severity) {
@@ -59,7 +59,7 @@ namespace lv {
         }
 #endif
 
-        bool Context::init() noexcept {
+        bool Context::init() {
             make_current();
 
             Log::core_debug("Loading OpenGL core profile function into GLFW loadproc.");
@@ -94,23 +94,23 @@ namespace lv {
             return true;
         }
 
-        void Context::make_current() noexcept {
+        void Context::make_current() {
             glfwMakeContextCurrent(handle);
         }
 
-        void Context::present() noexcept {
+        void Context::present() {
             glfwSwapBuffers(handle);
         }
 
-        std::shared_ptr<lv::Shader> Context::create_shader(Shader::SourceMap sources) noexcept {
+        std::shared_ptr<lv::Shader> Context::make_shader(Shader::SourceMap const& sources) {
             return std::make_unique<lv::opengl::Shader>(sources);
         }
 
-        std::shared_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices) noexcept {
+        std::shared_ptr<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex> const&& vertices) {
             return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), auto_index(vertices.size()));
         }
 
-        std::shared_ptr<lv::VertexArray> Context::create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept {
+        std::shared_ptr<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex> const&& vertices, std::vector<Index> const&& indices) {
             return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), std::move(indices));
         }
     }

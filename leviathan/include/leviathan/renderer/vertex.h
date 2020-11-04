@@ -19,8 +19,8 @@ namespace lv {
     static ElementLayout element_layout() { static_assert(false, "element_layout is not implemented for this type"); }
 
     struct Vertex {
-        glm::vec3 position;
-        glm::vec4 color;
+        glm::vec3 position = glm::vec3(0);
+        glm::vec4 color = glm::vec4(1);
     };
 
     template<>

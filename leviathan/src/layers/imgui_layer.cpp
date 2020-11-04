@@ -14,7 +14,7 @@
 #include "leviathan/log.h"
 
 namespace lv {
-    ImGuiLayer::ImGuiLayer(const Window& window) noexcept : Layer { "ImGui" }, window { window } {}
+    ImGuiLayer::ImGuiLayer(Window const& window) : Layer { "ImGui" }, window { window } {}
 
     void ImGuiLayer::init() {
         ImGui::CreateContext();
@@ -27,22 +27,21 @@ namespace lv {
 #endif
     }
 
-    void ImGuiLayer::pre_render() noexcept {
+    void ImGuiLayer::pre_render() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    void ImGuiLayer::post_render() noexcept {
+    void ImGuiLayer::post_render() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    bool ImGuiLayer::handle(const Event& event) noexcept {
-        auto& io = ImGui::GetIO();
-        return (
+    bool ImGuiLayer::handle(Event const& event) {
+        auto const& io = ImGui::GetIO();
+        return
             (event.is_in_category(EventCategory::Keyboard) && io.WantCaptureKeyboard) ||
-            (event.is_in_category(EventCategory::Mouse) && io.WantCaptureMouse)
-            );
+            (event.is_in_category(EventCategory::Mouse) && io.WantCaptureMouse);
     }
 }

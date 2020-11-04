@@ -6,6 +6,6 @@
 
 namespace lv {
     namespace ecs {
-        void register_default_components(ECS& ecs) noexcept;
+        void register_default_components(ECS& ecs);
     }
 }

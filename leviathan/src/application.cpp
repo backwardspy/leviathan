@@ -17,8 +17,6 @@ namespace lv {
         mesh_renderer = ecs.register_system<ecs::MeshRenderer>(ecs::MeshRenderer::get_archetype(ecs), ecs);
     }
 
-    Application::~Application() noexcept {}
-
     int Application::run() {
         init();
 
@@ -69,7 +67,7 @@ namespace lv {
         return 0;
     }
 
-    void Application::stop() noexcept {
+    void Application::stop() {
         running = false;
     }
 
@@ -81,7 +79,7 @@ namespace lv {
         Log::core_info("Application starting up.");
     }
 
-    void Application::handle(const Event& event) noexcept {
+    void Application::handle(Event const& event) {
         switch (event.type) {
             case Event::Type::WindowClosed:
                 Log::core_info("Window was closed.");
@@ -91,7 +89,7 @@ namespace lv {
     }
 
     LayerVector Application::with_default_layers(LayerVector&& layers) const {
-        layers.emplace(std::begin(layers), std::make_unique<ImGuiLayer>(window));
+        layers.insert(std::begin(layers), std::make_unique<ImGuiLayer>(window));
         return layers;
     }
 }

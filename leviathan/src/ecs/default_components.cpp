@@ -3,7 +3,7 @@
 
 namespace lv {
     namespace ecs {
-        void register_default_components(ECS& ecs) noexcept {
+        void register_default_components(ECS& ecs) {
             ecs.register_component<Transform>();
             ecs.register_component<Mesh>();
         }

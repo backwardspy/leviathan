@@ -3,9 +3,9 @@
 
 namespace lv {
     namespace ecs {
-        void ComponentManager::on_entity_unmade(Entity entity) noexcept {
+        void ComponentManager::on_entity_unmade(Entity entity) const {
             for (auto const& kv : component_arrays) {
-                kv.second->on_entity_destroyed(entity);
+                kv.second->on_entity_unmade(entity);
             }
         }
     }

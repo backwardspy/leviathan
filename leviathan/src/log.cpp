@@ -3,7 +3,7 @@
 #include "leviathan/log.h"
 
 namespace lv {
-    Log::Log() noexcept :
+    Log::Log() :
         core { spdlog::stderr_color_mt("leviathan") },
         client { spdlog::stderr_color_mt("app") }
     {
@@ -11,7 +11,7 @@ namespace lv {
         client->set_level(spdlog::level::trace);
     }
 
-    Log& Log::log() noexcept {
+    Log& Log::log() {
         static Log log;
         return log;
     }

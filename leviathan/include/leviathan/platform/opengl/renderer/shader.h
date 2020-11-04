@@ -8,17 +8,18 @@ namespace lv {
     namespace opengl {
         class Shader : public lv::Shader {
         public:
-            explicit Shader(const lv::Shader::SourceMap& sources);
+            explicit Shader(lv::Shader::SourceMap const& sources);
 
-            void use() noexcept override;
+            void use() override;
 
-            void set_mat4(const std::string& name, glm::mat4 mat) override;
+            void set_mat4(std::string const& name, glm::mat4) override;
+            void set_vec4(std::string const& name, glm::vec4) override;
 
-            ~Shader() noexcept override;
+            ~Shader() override;
 
         private:
-            void build_uniform_cache() noexcept;
-            bool Shader::get_uniform(const std::string& name, GLenum type, std::pair<GLint, GLenum>& uniform);
+            void build_uniform_cache();
+            bool Shader::get_uniform(std::string const& name, GLenum type, std::pair<GLint, GLenum>& uniform);
 
         private:
             GLuint program;

@@ -3,19 +3,15 @@
 #include "leviathan/events.h"
 
 namespace lv {
-    IEventListener::~IEventListener() noexcept {}
-
-    EventBus::EventBus() noexcept : events {}, listeners {} {}
-
-    void EventBus::add_listener(IEventListener& listener) noexcept {
+    void EventBus::add_listener(IEventListener& listener) {
         listeners.emplace_back(listener);
     }
 
-    void EventBus::emplace(Event&& event) noexcept {
-        events.emplace(std::move(event));
+    void EventBus::push(Event&& event) {
+        events.push(std::move(event));
     }
 
-    void EventBus::drain() noexcept {
+    void EventBus::drain() {
         Event event;
         while (!events.empty()) {
             event = std::move(events.front());

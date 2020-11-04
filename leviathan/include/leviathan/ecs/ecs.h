@@ -9,20 +9,20 @@ namespace lv {
         class ECS {
         public:
 #pragma region Entity
-            Entity make_entity() noexcept;
-            void unmake_entity(Entity) noexcept;
+            Entity make_entity();
+            void unmake_entity(Entity);
 #pragma endregion
 
 #pragma region Component
-            template<class T> void register_component() noexcept;
-            template<class T> void add_component(Entity, T) noexcept;
-            template<class T> void remove_component(Entity) noexcept;
-            template<class T> T& get_component(Entity) noexcept;
-            template<class T> Component get_component_type() noexcept;
+            template<class T> void register_component();
+            template<class T> void add_component(Entity, T);
+            template<class T> void remove_component(Entity);
+            template<class T> T& get_component(Entity) const;
+            template<class T> Component get_component_type() const;
 #pragma endregion
 
 #pragma region System
-            template<class T, class... Args> std::shared_ptr<T> register_system(Archetype, Args&&...) noexcept;
+            template<class T, class... Args> std::shared_ptr<T> register_system(Archetype, Args&&...);
 #pragma endregion
 
         private:
@@ -35,34 +35,34 @@ namespace lv {
         };
 
         template<class T>
-        inline void ECS::register_component() noexcept {
+        inline void ECS::register_component() {
             component_man.register_component<T>();
         }
 
         template<class T>
-        inline void ECS::add_component(Entity entity, T component) noexcept {
+        inline void ECS::add_component(Entity entity, T component) {
             component_man.add_component(entity, component);
             update_archetype(entity, component_man.get_component_type<T>(), true);
         }
 
         template<class T>
-        inline void ECS::remove_component(Entity entity) noexcept {
+        inline void ECS::remove_component(Entity entity) {
             component_man.remove_component<T>(entity);
             update_archetype(entity, component_man.get_component_type<T>(), false);
         }
 
         template<class T>
-        inline T& ECS::get_component(Entity entity) noexcept {
+        inline T& ECS::get_component(Entity entity) const {
             return component_man.get_component<T>(entity);
         }
 
         template<class T>
-        inline Component ECS::get_component_type() noexcept {
+        inline Component ECS::get_component_type() const {
             return component_man.get_component_type<T>();
         }
 
         template<class T, class... Args>
-        inline std::shared_ptr<T> ECS::register_system(Archetype archetype, Args&&... args) noexcept {
+        inline std::shared_ptr<T> ECS::register_system(Archetype archetype, Args&&... args) {
             return system_man.register_system<T>(archetype, std::forward<Args>(args)...);
         }
     }

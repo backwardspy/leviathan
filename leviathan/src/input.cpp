@@ -5,12 +5,12 @@
 namespace lv {
     std::unique_ptr<Input> Input::instance;
 
-    void Input::init(EventBus& event_bus, const Window& window) noexcept {
+    void Input::init(EventBus& event_bus, Window const& window) {
         if (instance) return;
         instance = std::unique_ptr<Input> { new Input{event_bus, window} }; // make_unique can't access private constructor
     }
 
-    Input::Input(EventBus& event_bus, const Window& window) noexcept :
+    Input::Input(EventBus& event_bus, Window const& window) :
         window { window } {
         std::fill(std::begin(cur_keys), std::end(cur_keys), false);
         std::fill(std::begin(prev_keys), std::end(prev_keys), false);
@@ -19,35 +19,35 @@ namespace lv {
         event_bus.add_listener(*this);
     }
 
-    bool Input::is_key_pressed(KeyCode code) noexcept {
+    bool Input::is_key_pressed(KeyCode code) {
         return instance->cur_keys[(size_t) code];
     }
 
-    bool Input::is_key_just_pressed(KeyCode code) noexcept {
+    bool Input::is_key_just_pressed(KeyCode code) {
         return instance->cur_keys[(size_t) code] && !instance->prev_keys[(size_t) code];
     }
 
-    bool Input::is_key_just_released(KeyCode code) noexcept {
+    bool Input::is_key_just_released(KeyCode code) {
         return !instance->cur_keys[(size_t) code] && instance->prev_keys[(size_t) code];
     }
 
-    bool Input::is_button_pressed(ButtonCode code) noexcept {
+    bool Input::is_button_pressed(ButtonCode code) {
         return instance->cur_buttons[(size_t) code];
     }
 
-    bool Input::is_button_just_pressed(ButtonCode code)  noexcept {
+    bool Input::is_button_just_pressed(ButtonCode code) {
         return instance->cur_buttons[(size_t) code] && !instance->prev_buttons[(size_t) code];
     }
 
-    bool Input::is_button_just_released(ButtonCode code)  noexcept {
+    bool Input::is_button_just_released(ButtonCode code) {
         return !instance->cur_buttons[(size_t) code] && instance->prev_buttons[(size_t) code];
     }
 
-    glm::vec2 Input::get_mouse_position() noexcept {
+    glm::vec2 Input::get_mouse_position() {
         return instance->window.get_mouse_position();
     }
 
-    void Input::end_frame() noexcept {
+    void Input::end_frame() {
         std::copy(
             std::begin(instance->cur_keys),
             std::end(instance->cur_keys),
@@ -60,7 +60,7 @@ namespace lv {
         );
     }
 
-    void Input::handle(const Event& event) noexcept {
+    void Input::handle(Event const& event) {
         switch (event.type) {
             case Event::Type::KeyPressed: cur_keys[(size_t) event.key.code] = true; return;
             case Event::Type::KeyReleased: cur_keys[(size_t) event.key.code] = false; return;

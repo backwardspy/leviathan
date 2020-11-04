@@ -7,7 +7,7 @@ namespace lv {
         ~NonCopyable() = default;
 
     private:
-        NonCopyable(const NonCopyable&) = delete;
-        NonCopyable& operator=(const NonCopyable&) = delete;
+        NonCopyable(NonCopyable const&) = delete;
+        NonCopyable& operator=(NonCopyable const&) = delete;
     };
 }

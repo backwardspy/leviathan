@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "vertex_array.h"
 #include "vertex.h"
+#include "material.h"
 
 namespace lv {
     static std::vector<Index> auto_index(size_t count) {
@@ -14,14 +15,15 @@ namespace lv {
 
     class Context {
     public:
-        virtual ~Context() noexcept {}
+        virtual ~Context() = default;
 
-        virtual bool init() noexcept = 0;
-        virtual void make_current() noexcept = 0;
-        virtual void present() noexcept = 0;
+        virtual bool init() = 0;
+        virtual void make_current() = 0;
+        virtual void present() = 0;
 
-        virtual std::shared_ptr<Shader> create_shader(Shader::SourceMap sources) noexcept = 0;
-        virtual std::shared_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices) noexcept = 0;
-        virtual std::shared_ptr<VertexArray> create_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) noexcept = 0;
+        virtual std::shared_ptr<Shader> make_shader(Shader::SourceMap const&) = 0;
+        virtual std::shared_ptr<VertexArray> make_vertex_array(std::vector<Vertex> const&&) = 0;
+        virtual std::shared_ptr<VertexArray> make_vertex_array(std::vector<Vertex> const&&, std::vector<Index> const&&) = 0;
+        std::shared_ptr<Material> make_material(std::shared_ptr<Shader>);
     };
 }

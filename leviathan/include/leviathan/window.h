@@ -3,6 +3,7 @@
 #include "leviathan/lvpch.h"
 #include "leviathan/events.h"
 #include "leviathan/renderer/context.h"
+#include "leviathan/core/noncopyable.h"
 
 namespace lv {
     struct WindowSettings {
@@ -12,33 +13,30 @@ namespace lv {
 
     class WindowImpl {
     public:
-        virtual void update() const noexcept = 0;
-        virtual void present() const noexcept = 0;
+        virtual void update() const = 0;
+        virtual void present() const = 0;
 
-        virtual Context& get_context() const noexcept = 0;
-        virtual glm::ivec2 get_size() const noexcept = 0;
-        virtual float get_aspect_ratio() const noexcept = 0;
-        virtual glm::vec2 get_mouse_position() const noexcept = 0;
-        virtual std::any get_native_handle() const noexcept = 0;
+        virtual Context& get_context() const = 0;
+        virtual glm::ivec2 get_size() const = 0;
+        virtual float get_aspect_ratio() const = 0;
+        virtual glm::vec2 get_mouse_position() const = 0;
+        virtual std::any get_native_handle() const = 0;
 
-        virtual ~WindowImpl() noexcept {}
+        virtual ~WindowImpl() = default;
     };
 
-    class Window {
+    class Window : public NonCopyable {
     public:
         Window(WindowSettings&&, EventBus&);
 
-        Window(const Window&) = delete;
-        void operator=(const Window&) = delete;
+        void update() const { impl->update(); }
+        void present() const { impl->present(); }
 
-        void update() const noexcept { impl->update(); }
-        void present() const noexcept { impl->present(); }
-
-        glm::ivec2 get_size() const noexcept { return impl->get_size(); }
-        virtual float get_aspect_ratio() const noexcept { return impl->get_aspect_ratio(); }
-        Context& get_context() const noexcept { return impl->get_context(); }
+        glm::ivec2 get_size() const { return impl->get_size(); }
+        virtual float get_aspect_ratio() const { return impl->get_aspect_ratio(); }
+        Context& get_context() const { return impl->get_context(); }
         glm::vec2 get_mouse_position() const { return impl->get_mouse_position(); }
-        std::any get_native_handle() const noexcept { return impl->get_native_handle(); }
+        std::any get_native_handle() const { return impl->get_native_handle(); }
 
     private:
         std::unique_ptr<WindowImpl> impl;
