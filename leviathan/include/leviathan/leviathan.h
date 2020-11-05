@@ -12,3 +12,5 @@
 #include "entry_point.h"
 
 #include <imgui.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>

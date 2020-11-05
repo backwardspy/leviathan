@@ -116,7 +116,7 @@ public:
         quad_entity(app.get_ecs().make_entity()),
         tri_entity(app.get_ecs().make_entity()),
         cam(lv::Camera::make_orthographic(1.0f, app.get_window().get_aspect_ratio())) {
-        material->set_parameter<glm::vec4>("Tint", glm::vec4(1));
+        material->set_parameter<glm::vec4>("Tint", quad_color);
 
         set_shader_vp();
 
@@ -153,10 +153,10 @@ private:
         auto& context = app.get_render_context();
         auto vertex_array = [&context] {
             std::vector<lv::Vertex> verts {
-                { { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
-                { { 0.5f, -0.5f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
-                { { -0.5f, 0.5f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
-                { { 0.5f, 0.5f, 0.0f }, { 1.0f, 0.7f, 0.0f, 1.0f } },
+                { glm::vec3(-0.5f, -0.5f, 0), glm::vec4(1) },
+                { glm::vec3(0.5f, -0.5f, 0), glm::vec4(1) },
+                { glm::vec3(-0.5f, 0.5f, 0), glm::vec4(1) },
+                { glm::vec3(0.5f, 0.5f, 0), glm::vec4(1) },
             };
 
             std::vector<lv::Index> indices {
@@ -177,17 +177,20 @@ private:
         auto& context = app.get_render_context();
         auto vertex_array = [&context] {
             std::vector<lv::Vertex> verts {
-                { { 0.0f, 0.3f, 0.0f }, { 0.7f, 1.0f, 0.0f, 1.0f } },
-                { { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.7f, 1.0f, 1.0f } },
-                { { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.7f, 1.0f } },
+                { glm::vec3(0, 0.3f, 0), glm::vec4(0.7f, 1, 0, 1) },
+                { glm::vec3(0.5f, -0.5f, 0), glm::vec4(0, 0.7f, 1, 1) },
+                { glm::vec3(-0.5f, -0.5f, 0), glm::vec4(1, 0, 0.7f, 1) },
             };
 
             return context.make_vertex_array(std::move(verts));
         }();
 
+        auto mat = context.make_material(shader);
+        mat->set_parameter("Tint", glm::vec4(1.0f));
+
         auto& ecs = app.get_ecs();
         ecs.add_component(tri_entity, lv::ecs::Transform {});
-        ecs.add_component(tri_entity, lv::ecs::Mesh { material, vertex_array });
+        ecs.add_component(tri_entity, lv::ecs::Mesh { mat, vertex_array });
         ecs.add_component(tri_entity, DragControl {});
     }
 
@@ -221,20 +224,21 @@ private:
 
     void gui() override {
         auto const mouse_pos = lv::Input::get_mouse_position();
-        auto const mouse_uv = mouse_pos / static_cast<glm::vec2>(app.get_window().get_size());
-
-        auto const tint = glm::vec4(mouse_uv.x, mouse_uv.y, 1, 1);
-        material->set_parameter("Tint", tint);
-
         auto const cam_pos = cam.get_position();
         auto const dt = lv::time::render_delta_time();
 
         ImGui::Begin("Sandbox");
-        ImGui::Text("Mouse: %.f, %.f (%.3f, %.3f)", mouse_pos.x, mouse_pos.y, mouse_uv.x, mouse_uv.y);
+        ImGui::Text("Mouse: %.f, %.f", mouse_pos.x, mouse_pos.y);
         ImGui::Text("Camera position: %.3f, %.3f", cam_pos.x, cam_pos.y);
         ImGui::Text("Zoom: %.f", zoom);
         ImGui::Text("Performance: %.3f ms/frame (%.f fps)", lv::time::to_milliseconds(dt).count(), 1.0f / lv::time::to_seconds(dt).count());
         ImGui::Text("Simulation Time: %.3f", lv::time::to_seconds(lv::time::elapsed()).count());
+        ImGui::End();
+
+        ImGui::Begin("Quad");
+        if (ImGui::ColorEdit4("Quad Colour", glm::value_ptr(quad_color))) {
+            material->set_parameter("Tint", quad_color);
+        }
         ImGui::End();
     }
 
@@ -245,6 +249,7 @@ private:
     std::shared_ptr<lv::Material> material;
 
     lv::ecs::Entity quad_entity, tri_entity;
+    glm::vec4 quad_color = glm::vec4(1);
 
     lv::Camera cam;
     float zoom = 0.0f;
