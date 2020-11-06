@@ -1,5 +1,6 @@
 #pragma once
 
+#include "leviathan/core.h"
 #include "leviathan/platform/opengl/opengl.h"
 #include "leviathan/window.h"
 #include "leviathan/renderer/context.h"
@@ -31,7 +32,7 @@ namespace lv {
             void on_mouse_scrolled(double x_offset, double y_offset);
 
         private:
-            std::unique_ptr<Context> context;
+            scope<Context> context;
             EventBus& event_bus;
             GLFWwindow* handle;
         };

@@ -13,6 +13,7 @@ vendor = {
         glad = "%{wks.location}/leviathan/vendor/glad/include",
         imgui = "%{wks.location}/leviathan/vendor/imgui",
         glm = "%{wks.location}/leviathan/vendor/glm",
+        stb = "%{wks.location}/leviathan/vendor/stb/include",
     }
 }
 
@@ -22,6 +23,7 @@ group "dependencies"
     include "leviathan/vendor/glad"
     include "leviathan/vendor/imgui"
     include "leviathan/vendor/glm"
+    include "leviathan/vendor/stb"
 group ""
 
 project "leviathan"
@@ -45,6 +47,7 @@ project "leviathan"
         vendor.includedirs.glad,
         vendor.includedirs.imgui,
         vendor.includedirs.glm,
+        vendor.includedirs.stb,
     }
 
     defines {
@@ -94,6 +97,7 @@ project "sandbox"
         vendor.includedirs.glad,
         vendor.includedirs.imgui,
         vendor.includedirs.glm,
+        vendor.includedirs.stb,
     }
 
     defines {

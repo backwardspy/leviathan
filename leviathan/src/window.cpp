@@ -10,5 +10,5 @@ using SelectedWindowImpl = lv::opengl::WindowImpl;
 
 namespace lv {
     Window::Window(WindowSettings&& settings, EventBus& bus) :
-        impl { std::make_unique<SelectedWindowImpl>(std::move(settings), bus) } {}
+        impl { make_scope<SelectedWindowImpl>(std::move(settings), bus) } {}
 }

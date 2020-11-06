@@ -1,7 +1,6 @@
 #pragma once
 
 #include "leviathan/lvpch.h"
-#include "leviathan/log.h"
 #include "leviathan/ecs/entity.h"
 #include "leviathan/ecs/component.h"
 #include "leviathan/ecs/component_array.h"
@@ -28,7 +27,7 @@ namespace lv {
             template<class T> static char const* component_name() { return typeid(T).name(); }
 
             std::unordered_map<ComponentType, Component> components {};
-            std::unordered_map<ComponentType, std::unique_ptr<IComponentArray>> component_arrays {};
+            std::unordered_map<ComponentType, scope<IComponentArray>> component_arrays {};
             Component next_component = 0;
         };
 
@@ -43,7 +42,7 @@ namespace lv {
             }
 
             components[type] = next_component++;
-            component_arrays[type] = std::make_unique<ComponentArray<T>>();
+            component_arrays[type] = make_scope<ComponentArray<T>>();
 
             Log::core_debug("Registered component {}.", name);
         }

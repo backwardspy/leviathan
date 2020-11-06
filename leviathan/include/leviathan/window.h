@@ -39,6 +39,6 @@ namespace lv {
         std::any get_native_handle() const { return impl->get_native_handle(); }
 
     private:
-        std::unique_ptr<WindowImpl> impl;
+        scope<WindowImpl> impl;
     };
 }

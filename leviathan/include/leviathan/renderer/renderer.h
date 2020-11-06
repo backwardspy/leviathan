@@ -30,6 +30,6 @@ namespace lv {
         static void draw_vertex_array(VertexArray& va, RenderMode mode) { impl->draw_vertex_array(va, mode); }
 
     private:
-        static std::unique_ptr<RenderBackendImpl> impl;
+        static scope<RenderBackendImpl> impl;
     };
 }

@@ -2,6 +2,7 @@
 
 #include "leviathan/lvpch.h"
 #include "shader.h"
+#include "texture.h"
 
 namespace lv {
     class IMaterialParam {
@@ -34,20 +35,42 @@ namespace lv {
         glm::vec4 value;
     };
 
+    template<>
+    class MaterialParam<float> : public IMaterialParam {
+    public:
+        explicit MaterialParam(float value) : value(value) {}
+        void apply(std::string const& name, Shader& shader) const override;
+
+    public:
+        float value;
+    };
+
+    template<>
+    class MaterialParam<int32_t> : public IMaterialParam {
+    public:
+        explicit MaterialParam(int32_t value) : value(value) {}
+        void apply(std::string const& name, Shader& shader) const override;
+
+    public:
+        int32_t value;
+    };
+
     class Material {
     public:
-        explicit Material(std::shared_ptr<Shader>);
+        explicit Material(ref<Shader>);
 
         void use();
 
         template<class T> void set_parameter(std::string const& name, T const& value);
+        void set_texture(std::string const& name, int32_t slot, ref<Texture> texture);
 
         Shader const& get_shader() const { return *shader; }
         Shader& get_shader() { return *shader; }
 
     private:
-        std::shared_ptr<Shader> shader;
-        std::unordered_map<std::string, std::unique_ptr<IMaterialParam>> params;
+        ref<Shader> shader;
+        std::unordered_map<std::string, scope<IMaterialParam>> params;
+        std::vector<ref<Texture>> textures;
     };
 
     template<class T>
@@ -55,7 +78,7 @@ namespace lv {
         if (params.find(name) == std::end(params)) {
             // TODO: CppCheck says searching before inserting here isn't necessary.
             // I'm inclined to disagree because we don't want to delete and recreate the object if it already exists.
-            params[name] = std::make_unique<MaterialParam<T>>(value);   // cppcheck-suppress stlFindInsert
+            params[name] = make_scope<MaterialParam<T>>(value);   // cppcheck-suppress stlFindInsert
         }
 
         // TODO: is there some way we could validate the type here and static_cast?
@@ -69,4 +92,6 @@ namespace lv {
 
     inline void MaterialParam<glm::mat4>::apply(std::string const& name, Shader& shader) const { shader.set_mat4(name, value); }
     inline void MaterialParam<glm::vec4>::apply(std::string const& name, Shader& shader) const { shader.set_vec4(name, value); }
+    inline void MaterialParam<int32_t>::apply(std::string const& name, Shader& shader) const { shader.set_int(name, value); }
+    inline void MaterialParam<float>::apply(std::string const& name, Shader& shader) const { shader.set_float(name, value); }
 }

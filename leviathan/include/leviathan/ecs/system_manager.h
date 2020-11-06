@@ -1,5 +1,6 @@
 #pragma once
 
+#include "leviathan/core.h"
 #include "system.h"
 #include "entity.h"
 #include "component.h"
@@ -8,7 +9,7 @@ namespace lv {
     namespace ecs {
         class SystemManager {
         public:
-            template<class T, class... Args> std::shared_ptr<T> register_system(Archetype, Args&&...);
+            template<class T, class... Args> ref<T> register_system(Archetype, Args&&...);
 
             void on_entity_unmade(Entity) const;
             void on_entity_archetype_changed(Entity, Archetype const&) const;
@@ -20,11 +21,11 @@ namespace lv {
             template<class T> static char const* system_name() { return typeid(T).name(); }
 
             std::unordered_map<SystemType, Archetype> archetypes {};
-            std::unordered_map<SystemType, std::shared_ptr<System>> systems {};
+            std::unordered_map<SystemType, ref<System>> systems {};
         };
 
         template<class T, class... Args>
-        inline std::shared_ptr<T> SystemManager::register_system(Archetype archetype, Args&&... args) {
+        inline ref<T> SystemManager::register_system(Archetype archetype, Args&&... args) {
             auto type = system_type<T>();
             auto name = system_name<T>();
 
@@ -33,7 +34,7 @@ namespace lv {
                 return std::static_pointer_cast<T>(systems[type]);
             }
 
-            auto system = std::make_shared<T>(std::forward<Args>(args)...);
+            auto system = make_ref<T>(std::forward<Args>(args)...);
             systems[type] = system;
             archetypes[type] = archetype;
 

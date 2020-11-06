@@ -10,13 +10,13 @@ namespace lv {
             }
         };
 
-        struct RenderContextException : public LeviathanException {
+        struct RenderContextError : public LeviathanException {
             char const* what() const override {
                 return "Failed to initialize render context.";
             }
         };
 
-        struct EnumeratorNotImplementedError : public LeviathanException {
+        struct EnumeratorNotImplemented : public LeviathanException {
             char const* what() const override {
                 return "An enumerator has not been implemented.";
             }
@@ -37,6 +37,12 @@ namespace lv {
         struct ComponentNotFound : public LeviathanException {
             char const* what() const override {
                 return "The specified component does not exist.";
+            }
+        };
+
+        struct FileReadError : public LeviathanException {
+            char const* what() const override {
+                return "An error occurred while reading a file.";
             }
         };
     }

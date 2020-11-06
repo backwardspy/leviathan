@@ -1,6 +1,4 @@
 #include "leviathan/lvpch.h"
-#include "leviathan/exc.h"
-#include "leviathan/log.h"
 #include "leviathan/ecs/entity.h"
 #include "leviathan/ecs/entity_manager.h"
 

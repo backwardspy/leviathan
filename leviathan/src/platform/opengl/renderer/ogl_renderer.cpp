@@ -1,14 +1,13 @@
 #include "leviathan/lvpch.h"
 #include "leviathan/platform/opengl/opengl.h"
 #include "leviathan/platform/opengl/renderer/renderer.h"
-#include "leviathan/exc.h"
 
 namespace lv {
     namespace opengl {
         constexpr GLenum to_gl_mode(RenderMode mode) {
             switch (mode) {
                 case RenderMode::Triangles: return GL_TRIANGLES;
-                default: throw exc::EnumeratorNotImplementedError {};
+                default: throw exc::EnumeratorNotImplemented {};
             }
         }
 

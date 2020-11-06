@@ -1,8 +1,6 @@
 #include "leviathan/lvpch.h"
-
 #include "leviathan/application.h"
 #include "leviathan/renderer/renderer.h"
-#include "leviathan/log.h"
 #include "leviathan/core/time.h"
 #include "leviathan/ecs/default_components.h"
 
@@ -89,7 +87,7 @@ namespace lv {
     }
 
     LayerVector Application::with_default_layers(LayerVector&& layers) const {
-        layers.insert(std::begin(layers), std::make_unique<ImGuiLayer>(window));
+        layers.insert(std::begin(layers), make_scope<ImGuiLayer>(window));
         return layers;
     }
 }
