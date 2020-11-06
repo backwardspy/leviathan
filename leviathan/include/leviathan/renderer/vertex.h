@@ -21,6 +21,7 @@ namespace lv {
     struct Vertex {
         glm::vec3 position = glm::vec3(0);
         glm::vec4 color = glm::vec4(1);
+        glm::vec2 uv = glm::vec2(0);
     };
 
     template<>
@@ -28,6 +29,7 @@ namespace lv {
         return {
             { ElementType::Float, 3, sizeof(glm::vec3) },
             { ElementType::Float, 4, sizeof(glm::vec4) },
+            { ElementType::Float, 2, sizeof(glm::vec2) },
         };
     }
 

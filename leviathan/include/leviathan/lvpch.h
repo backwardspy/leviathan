@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <any>
 #include <chrono>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <iterator>
@@ -37,4 +38,8 @@
 
 // vendor
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
+
+// leviathan
+#include "leviathan/core.h"

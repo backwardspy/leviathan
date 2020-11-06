@@ -1,7 +1,5 @@
 #include "leviathan/lvpch.h"
-
 #include "leviathan/layer_stack.h"
-#include "leviathan/log.h"
 
 namespace lv {
     LayerStack::LayerStack(EventBus& event_bus) {

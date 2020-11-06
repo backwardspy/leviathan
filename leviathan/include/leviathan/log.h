@@ -75,7 +75,7 @@ namespace lv {
                 case Log::Level::Warn: return spdlog::level::warn;
                 case Log::Level::Error: return spdlog::level::err;
                 case Log::Level::Critical: return spdlog::level::critical;
-                default: throw exc::EnumeratorNotImplementedError {};
+                default: throw exc::EnumeratorNotImplemented {};
             }
         }
 

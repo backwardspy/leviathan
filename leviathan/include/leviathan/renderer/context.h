@@ -5,6 +5,7 @@
 #include "vertex_array.h"
 #include "vertex.h"
 #include "material.h"
+#include "texture.h"
 
 namespace lv {
     static std::vector<Index> auto_index(size_t count) {
@@ -21,9 +22,10 @@ namespace lv {
         virtual void make_current() = 0;
         virtual void present() = 0;
 
-        virtual std::shared_ptr<Shader> make_shader(Shader::SourceMap const&) = 0;
-        virtual std::shared_ptr<VertexArray> make_vertex_array(std::vector<Vertex> const&&) = 0;
-        virtual std::shared_ptr<VertexArray> make_vertex_array(std::vector<Vertex> const&&, std::vector<Index> const&&) = 0;
-        std::shared_ptr<Material> make_material(std::shared_ptr<Shader>);
+        virtual ref<Shader> make_shader(std::string const&) = 0;
+        virtual ref<VertexArray> make_vertex_array(std::vector<Vertex>&&) = 0;
+        virtual ref<VertexArray> make_vertex_array(std::vector<Vertex>&&, std::vector<Index>&&) = 0;
+        virtual ref<Texture> make_texture(std::string const& filename) = 0;
+        ref<Material> make_material(ref<Shader>);
     };
 }

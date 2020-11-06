@@ -11,7 +11,6 @@
 #endif
 
 #include "leviathan/layers/imgui_layer.h"
-#include "leviathan/log.h"
 
 namespace lv {
     ImGuiLayer::ImGuiLayer(Window const& window) : Layer { "ImGui" }, window { window } {}

@@ -8,12 +8,14 @@ namespace lv {
     namespace opengl {
         class Shader : public lv::Shader {
         public:
-            explicit Shader(lv::Shader::SourceMap const& sources);
+            explicit Shader(std::string const& filename);
 
             void use() override;
 
             void set_mat4(std::string const& name, glm::mat4) override;
             void set_vec4(std::string const& name, glm::vec4) override;
+            void set_int(std::string const& name, int32_t) override;
+            void set_float(std::string const& name, float) override;
 
             ~Shader() override;
 

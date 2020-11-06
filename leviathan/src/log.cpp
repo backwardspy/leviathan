@@ -1,7 +1,5 @@
 #include "leviathan/lvpch.h"
 
-#include "leviathan/log.h"
-
 namespace lv {
     Log::Log() :
         core { spdlog::stderr_color_mt("leviathan") },

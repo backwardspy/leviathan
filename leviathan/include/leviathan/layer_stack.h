@@ -5,7 +5,7 @@
 #include "core/time.h"
 
 namespace lv {
-    using LayerVector = std::vector<std::unique_ptr<Layer>>;
+    using LayerVector = std::vector<scope<Layer>>;
 
     class LayerStack : public IEventListener {
     public:
@@ -25,6 +25,6 @@ namespace lv {
         void handle(Event const&) override;
 
     private:
-        std::vector<std::unique_ptr<Layer>> layers;
+        std::vector<scope<Layer>> layers;
     };
 }

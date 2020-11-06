@@ -1,9 +1,9 @@
 #pragma once
 
+#include "core.h"
 #include "application.h"
-#include "exc.h"
 
-extern std::unique_ptr<lv::Application> lv::CreateApplication();
+extern lv::scope<lv::Application> lv::CreateApplication();
 
 int main(int argc, char const* const argv[]) {
     try {

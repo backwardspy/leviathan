@@ -3,8 +3,6 @@
 #include <glm/ext.hpp>
 
 #include "leviathan/camera.h"
-#include "leviathan/exc.h"
-#include "leviathan/log.h"
 
 namespace lv {
     Camera Camera::make_orthographic(float ortho_size, float aspect_ratio) {
@@ -56,7 +54,7 @@ namespace lv {
                 p = glm::ortho(-ortho_size * aspect_ratio, ortho_size * aspect_ratio, -ortho_size, ortho_size);
                 break;
             default:
-                throw exc::EnumeratorNotImplementedError {};
+                throw exc::EnumeratorNotImplemented {};
         }
     }
 

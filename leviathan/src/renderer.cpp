@@ -4,7 +4,7 @@
 #include "leviathan/platform/opengl/renderer/renderer.h"
 
 namespace lv {
-    std::unique_ptr<RenderBackendImpl> RenderBackend::impl = std::make_unique<opengl::RenderBackendImpl>();
+    scope<RenderBackendImpl> RenderBackend::impl = make_scope<opengl::RenderBackendImpl>();
 
     void Renderer::clear(glm::vec4 color) {
         RenderBackend::set_clear_color(color);

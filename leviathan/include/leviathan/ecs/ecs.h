@@ -1,5 +1,6 @@
 #pragma once
 
+#include "leviathan/core.h"
 #include "entity_manager.h"
 #include "component_manager.h"
 #include "system_manager.h"
@@ -22,7 +23,7 @@ namespace lv {
 #pragma endregion
 
 #pragma region System
-            template<class T, class... Args> std::shared_ptr<T> register_system(Archetype, Args&&...);
+            template<class T, class... Args> ref<T> register_system(Archetype, Args&&...);
 #pragma endregion
 
         private:
@@ -62,7 +63,7 @@ namespace lv {
         }
 
         template<class T, class... Args>
-        inline std::shared_ptr<T> ECS::register_system(Archetype archetype, Args&&... args) {
+        inline ref<T> ECS::register_system(Archetype archetype, Args&&... args) {
             return system_man.register_system<T>(archetype, std::forward<Args>(args)...);
         }
     }

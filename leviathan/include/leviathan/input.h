@@ -1,7 +1,6 @@
 #pragma once
 
 #include "lvpch.h"
-
 #include "events.h"
 #include "keys.h"
 #include "buttons.h"
@@ -29,7 +28,7 @@ namespace lv {
         explicit Input(EventBus& event_bus, Window const&);
 
     private:
-        static std::unique_ptr<Input> instance;
+        static scope<Input> instance;
 
         Window const& window;
 

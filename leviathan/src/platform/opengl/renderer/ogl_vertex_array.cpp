@@ -1,8 +1,6 @@
 #pragma once
 
 #include "leviathan/lvpch.h"
-#include "leviathan/exc.h"
-
 #include "leviathan/platform/opengl/renderer/vertex_array.h"
 
 namespace lv {
@@ -11,7 +9,7 @@ namespace lv {
             switch (type) {
                 case ElementType::Float: return GL_FLOAT;
                 case ElementType::UInt: return GL_UNSIGNED_INT;
-                default: throw exc::EnumeratorNotImplementedError {};
+                default: throw exc::EnumeratorNotImplemented {};
             }
         }
 

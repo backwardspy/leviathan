@@ -1,6 +1,4 @@
 #include "leviathan/lvpch.h"
-#include "leviathan/log.h"
-#include "leviathan/exc.h"
 #include "leviathan/platform/opengl/window.h"
 #include "leviathan/platform/opengl/renderer/context.h"
 
@@ -15,7 +13,7 @@ namespace lv {
             Log::core_debug("Initialising GLFW with OpenGL {}.{}.", LVGLVersionMajor, LVGLVersionMinor);
             if (!glfwInit()) {
                 Log::core_critical("Failed to initialise GLFW.");
-                throw exc::RenderContextException {};
+                throw exc::RenderContextError {};
             }
 
             glfwSetErrorCallback([] (int code, char const* const description) {
@@ -34,7 +32,7 @@ namespace lv {
             handle = glfwCreateWindow(settings.size.x, settings.size.y, settings.title.c_str(), nullptr, nullptr);
             if (!handle) {
                 Log::core_critical("Failed to create GLFW window.");
-                throw exc::RenderContextException {};
+                throw exc::RenderContextError {};
             }
 
             Log::core_debug("Setting window user pointer.");
@@ -71,10 +69,10 @@ namespace lv {
             });
 
             Log::core_debug("Setting up render context.");
-            context = std::make_unique<opengl::Context>(handle);
+            context = make_scope<opengl::Context>(handle);
             if (!context->init()) {
                 Log::core_critical("Failed to initialise render context.");
-                throw exc::RenderContextException {};
+                throw exc::RenderContextError {};
             }
         }
 

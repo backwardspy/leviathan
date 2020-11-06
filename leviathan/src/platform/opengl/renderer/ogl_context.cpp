@@ -1,10 +1,8 @@
 #include "leviathan/lvpch.h"
-
-#include "leviathan/log.h"
-#include "leviathan/exc.h"
 #include "leviathan/platform/opengl/renderer/context.h"
 #include "leviathan/platform/opengl/renderer/shader.h"
 #include "leviathan/platform/opengl/renderer/vertex_array.h"
+#include "leviathan/platform/opengl/renderer/texture.h"
 
 namespace lv {
     namespace opengl {
@@ -56,6 +54,8 @@ namespace lv {
             Log::core_log(level, "* Source: {}", gl_debug_source_name(source));
             Log::core_log(level, "* Type: {}", gl_debug_type_name(type));
             Log::core_log(level, "* Message: {}", message);
+
+            if (level == Log::Level::Critical) throw exc::RenderContextError {};
         }
 #endif
 
@@ -91,6 +91,9 @@ namespace lv {
             glDebugMessageCallback(gl_debug_msg_callback, nullptr);
 #endif
 
+            Log::core_debug("Enabling blend.");
+            glEnable(GL_BLEND);
+
             return true;
         }
 
@@ -102,16 +105,20 @@ namespace lv {
             glfwSwapBuffers(handle);
         }
 
-        std::shared_ptr<lv::Shader> Context::make_shader(Shader::SourceMap const& sources) {
-            return std::make_unique<lv::opengl::Shader>(sources);
+        ref<lv::Shader> Context::make_shader(std::string const& filename) {
+            return make_scope<lv::opengl::Shader>(filename);
         }
 
-        std::shared_ptr<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex> const&& vertices) {
-            return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), auto_index(vertices.size()));
+        ref<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex>&& vertices) {
+            return make_scope<lv::opengl::VertexArray>(std::move(vertices), auto_index(vertices.size()));
         }
 
-        std::shared_ptr<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex> const&& vertices, std::vector<Index> const&& indices) {
-            return std::make_unique<lv::opengl::VertexArray>(std::move(vertices), std::move(indices));
+        ref<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) {
+            return make_scope<lv::opengl::VertexArray>(std::move(vertices), std::move(indices));
+        }
+
+        ref<lv::Texture> Context::make_texture(std::string const& filename) {
+            return make_scope<lv::opengl::Texture>(filename);
         }
     }
 }

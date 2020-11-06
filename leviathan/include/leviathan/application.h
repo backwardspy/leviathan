@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core.h"
 #include "events.h"
 #include "input.h"
 #include "layer_stack.h"
@@ -44,11 +45,11 @@ namespace lv {
         LayerStack layer_stack;
 
         // systems
-        std::shared_ptr<ecs::MeshRenderer> mesh_renderer;
+        ref<ecs::MeshRenderer> mesh_renderer;
 
         bool running = false;
     };
 
     // defined by client
-    std::unique_ptr<Application> CreateApplication();
+    scope<Application> CreateApplication();
 }

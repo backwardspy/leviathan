@@ -3,11 +3,11 @@
 #include "leviathan/input.h"
 
 namespace lv {
-    std::unique_ptr<Input> Input::instance;
+    scope<Input> Input::instance;
 
     void Input::init(EventBus& event_bus, Window const& window) {
         if (instance) return;
-        instance = std::unique_ptr<Input> { new Input{event_bus, window} }; // make_unique can't access private constructor
+        instance = scope<Input> { new Input{event_bus, window} }; // make_scope can't access private constructor
     }
 
     Input::Input(EventBus& event_bus, Window const& window) :

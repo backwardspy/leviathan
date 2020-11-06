@@ -1,48 +1,5 @@
 #include <leviathan/leviathan.h>
 
-std::string const VertexShaderSource {
-    R"glsl(
-        #version 460 core
-
-        uniform mat4 Model;
-        uniform mat4 ViewProjection;
-        uniform vec4 Tint;
-
-        layout(location = 0) in vec3 in_position;
-        layout(location = 1) in vec4 in_color;
-
-        out struct {
-            vec4 color;
-        } v2f;
-
-        void main() {
-            gl_Position = ViewProjection * Model * vec4(in_position, 1.0);
-            v2f.color = in_color * Tint;
-        }
-    )glsl"
-};
-
-std::string const PixelShaderSource {
-    R"glsl(
-        #version 460 core
-
-        out vec4 out_colour;
-
-        in struct {
-            vec4 color;
-        } v2f;
-
-        void main() {
-            out_colour = v2f.color;
-        }
-    )glsl"
-};
-
-lv::Shader::SourceMap const ShaderSourceMap {
-    {lv::Shader::Type::Vertex, VertexShaderSource },
-    {lv::Shader::Type::Pixel, PixelShaderSource },
-};
-
 struct DragControl {};
 
 class DragControlSystem : public lv::ecs::System {
@@ -111,12 +68,17 @@ public:
     explicit CustomLayer(lv::Application& app) :
         Layer("Custom"),
         app(app),
-        shader(app.get_render_context().make_shader(ShaderSourceMap)),
+        shader(app.get_render_context().make_shader("assets/shaders/unlit_generic.glsl")),
         material(app.get_render_context().make_material(shader)),
         quad_entity(app.get_ecs().make_entity()),
         tri_entity(app.get_ecs().make_entity()),
         cam(lv::Camera::make_orthographic(1.0f, app.get_window().get_aspect_ratio())) {
-        material->set_parameter<glm::vec4>("Tint", quad_color);
+        auto& ctx = app.get_render_context();
+
+        shader->set_alpha_blend(true);
+
+        material->set_texture("MainTex", 0, ctx.make_texture("assets/textures/duck.png"));
+        material->set_parameter("Tint", tint);
 
         set_shader_vp();
 
@@ -152,11 +114,12 @@ private:
     void init_quad_entity() {
         auto& context = app.get_render_context();
         auto vertex_array = [&context] {
+            auto scale = 16.0f;
             std::vector<lv::Vertex> verts {
-                { glm::vec3(-0.5f, -0.5f, 0), glm::vec4(1) },
-                { glm::vec3(0.5f, -0.5f, 0), glm::vec4(1) },
-                { glm::vec3(-0.5f, 0.5f, 0), glm::vec4(1) },
-                { glm::vec3(0.5f, 0.5f, 0), glm::vec4(1) },
+                { glm::vec3(-0.5f, -0.5f, 0), glm::vec4(1), glm::vec2(0, scale) },
+                { glm::vec3(0.5f, -0.5f, 0), glm::vec4(1), glm::vec2(scale) },
+                { glm::vec3(-0.5f, 0.5f, 0), glm::vec4(1), glm::vec2(0) },
+                { glm::vec3(0.5f, 0.5f, 0), glm::vec4(1), glm::vec2(scale, 0) },
             };
 
             std::vector<lv::Index> indices {
@@ -168,25 +131,26 @@ private:
         }();
 
         auto& ecs = app.get_ecs();
-        ecs.add_component(quad_entity, lv::ecs::Transform {});
+        ecs.add_component(quad_entity, lv::ecs::Transform { glm::vec3(0), glm::identity<glm::quat>(), glm::vec3(5) });
         ecs.add_component(quad_entity, lv::ecs::Mesh { material, vertex_array });
         ecs.add_component(quad_entity, RotateOverTime {});
     }
 
     void init_tri_entity() {
-        auto& context = app.get_render_context();
-        auto vertex_array = [&context] {
+        auto& ctx = app.get_render_context();
+        auto vertex_array = [&ctx] {
             std::vector<lv::Vertex> verts {
-                { glm::vec3(0, 0.3f, 0), glm::vec4(0.7f, 1, 0, 1) },
-                { glm::vec3(0.5f, -0.5f, 0), glm::vec4(0, 0.7f, 1, 1) },
-                { glm::vec3(-0.5f, -0.5f, 0), glm::vec4(1, 0, 0.7f, 1) },
+                { glm::vec3(0, -0.4f, 0), glm::vec4(0.7f, 1, 0, 1), glm::vec2(0.5f, 1) },
+                { glm::vec3(0.5f, 0.4f, 0), glm::vec4(0, 0.7f, 1, 1), glm::vec2(1, 0) },
+                { glm::vec3(-0.5f, 0.4f, 0), glm::vec4(1, 0, 0.7f, 1), glm::vec2(0) },
             };
 
-            return context.make_vertex_array(std::move(verts));
+            return ctx.make_vertex_array(std::move(verts));
         }();
 
-        auto mat = context.make_material(shader);
+        auto mat = ctx.make_material(shader);
         mat->set_parameter("Tint", glm::vec4(1.0f));
+        mat->set_texture("MainTex", 0, ctx.make_texture("assets/textures/pigeon.png"));
 
         auto& ecs = app.get_ecs();
         ecs.add_component(tri_entity, lv::ecs::Transform {});
@@ -235,9 +199,9 @@ private:
         ImGui::Text("Simulation Time: %.3f", lv::time::to_seconds(lv::time::elapsed()).count());
         ImGui::End();
 
-        ImGui::Begin("Quad");
-        if (ImGui::ColorEdit4("Quad Colour", glm::value_ptr(quad_color))) {
-            material->set_parameter("Tint", quad_color);
+        ImGui::Begin("Shader");
+        if (ImGui::ColorPicker4("Tint", glm::value_ptr(tint))) {
+            material->set_parameter("Tint", tint);
         }
         ImGui::End();
     }
@@ -245,28 +209,30 @@ private:
 private:
     lv::Application& app;
 
-    std::shared_ptr<lv::Shader> shader;
-    std::shared_ptr<lv::Material> material;
+    lv::ref<lv::Shader> shader;
+    lv::ref<lv::Material> material;
+
+    // shader params
+    glm::vec4 tint = glm::vec4(1.0f);
 
     lv::ecs::Entity quad_entity, tri_entity;
-    glm::vec4 quad_color = glm::vec4(1);
 
     lv::Camera cam;
     float zoom = 0.0f;
 
-    std::shared_ptr<DragControlSystem> drag_control_system;
-    std::shared_ptr<RotateOverTimeSystem> rotate_over_time_system;
+    lv::ref<DragControlSystem> drag_control_system;
+    lv::ref<RotateOverTimeSystem> rotate_over_time_system;
 };
 
 class Sandbox : public lv::Application {
 protected:
     virtual lv::LayerVector get_layers() override {
         lv::LayerVector layers;
-        layers.push_back(std::make_unique<CustomLayer>(*this));
+        layers.push_back(lv::make_scope<CustomLayer>(*this));
         return layers;
     }
 };
 
-std::unique_ptr<lv::Application> lv::CreateApplication() {
-    return std::make_unique<Sandbox>();
+lv::scope<lv::Application> lv::CreateApplication() {
+    return lv::make_scope<Sandbox>();
 }
