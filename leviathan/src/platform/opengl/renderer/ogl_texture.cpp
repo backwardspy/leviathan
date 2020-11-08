@@ -1,6 +1,6 @@
 #include "leviathan/lvpch.h"
 
-#include "stb/stb_image.h"
+#include <stb_image.h>
 
 #include "leviathan/platform/opengl/renderer/texture.h"
 
