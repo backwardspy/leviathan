@@ -10,3 +10,9 @@
 [submodule "leviathan/vendor/glm"]
 	path = leviathan/vendor/glm
 	url = git@github.com:backwardspy/glm.git
+[submodule "leviathan/vendor/stb"]
+	path = leviathan/vendor/stb
+	url = git@github.com:backwardspy/stb.git
+[submodule "leviathan/vendor/entt"]
+	path = leviathan/vendor/entt
+	url = git@github.com:backwardspy/entt.git
