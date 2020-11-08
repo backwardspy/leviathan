@@ -1,12 +1,10 @@
 #pragma once
 
-#include "core.h"
+#include "lvpch.h"
 #include "events.h"
 #include "input.h"
 #include "layer_stack.h"
 #include "window.h"
-#include "ecs/ecs.h"
-#include "ecs/default_systems.h"
 #include "core/noncopyable.h"
 
 namespace lv {
@@ -21,8 +19,8 @@ namespace lv {
         Context const& get_render_context() const { return window.get_context(); }
         Context& get_render_context() { return window.get_context(); }  // cppcheck-suppress functionConst
 
-        constexpr ecs::ECS const& get_ecs() const { return ecs; }
-        constexpr ecs::ECS& get_ecs() { return ecs; }   // cppcheck-suppress functionConst
+        entt::registry const& get_ent_registry() const { return ent_registry; }
+        entt::registry& get_ent_registry() { return ent_registry; } // cppcheck-suppress functionConst
 
         virtual ~Application();
 
@@ -32,7 +30,6 @@ namespace lv {
 
     protected:
         Window window;
-        ecs::ECS ecs {};
 
     private:
         void init();
@@ -40,12 +37,13 @@ namespace lv {
 
         LayerVector with_default_layers(LayerVector&&) const;
 
+        void on_camera_constructed(entt::registry&, entt::entity);
+
     private:
         EventBus event_bus {};
         LayerStack layer_stack;
 
-        // systems
-        ref<ecs::MeshRenderer> mesh_renderer;
+        entt::registry ent_registry {};
 
         bool running = false;
     };

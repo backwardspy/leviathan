@@ -40,6 +40,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <entt/entt.hpp>
 
 // leviathan
 #include "leviathan/core.h"

@@ -35,6 +35,7 @@ namespace lv {
             scope<Context> context;
             EventBus& event_bus;
             GLFWwindow* handle;
+            glm::vec2 last_mouse_position = glm::vec2(-1);
         };
     }
 }
