@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ecs.h"
-#include "components/transform.h"
+#include "components/camera.h"
 #include "components/mesh.h"
+#include "components/transform.h"
 
 namespace lv {
     namespace ecs {

@@ -14,7 +14,7 @@ namespace lv {
             void make_current() override;
             void present() override;
 
-            ref<lv::Shader> make_shader(std::string const&) override;
+            ref<lv::Shader> make_shader(std::string const& filename, std::unordered_set<lv::Shader::Type> const&) override;
             ref<lv::VertexArray> make_vertex_array(std::vector<Vertex>&& vertices) override;
             ref<lv::VertexArray> make_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) override;
             ref<lv::Texture> make_texture(std::string const& filename) override;

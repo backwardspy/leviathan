@@ -3,8 +3,12 @@
 #include "leviathan/events.h"
 
 namespace lv {
-    void EventBus::add_listener(IEventListener& listener) {
-        listeners.emplace_back(listener);
+    void EventBus::add_listener(IEventListener* const listener) {
+        listeners.push_back(listener);
+    }
+
+    void EventBus::remove_listener(IEventListener* const listener) {
+        listeners.remove(listener);
     }
 
     void EventBus::push(Event&& event) {
@@ -16,9 +20,7 @@ namespace lv {
         while (!events.empty()) {
             event = std::move(events.front());
             events.pop();
-            for (auto& listener : listeners) {
-                listener.get().handle(event);
-            }
+            for (auto const listener : listeners) listener->handle(event);
         }
     }
 }

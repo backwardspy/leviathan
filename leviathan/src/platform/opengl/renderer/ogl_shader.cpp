@@ -3,10 +3,18 @@
 
 namespace lv {
     namespace opengl {
+        GLenum shader_type_to_gl_type(Shader::Type type) {
+            switch (type) {
+                case Shader::Type::Vertex: return GL_VERTEX_SHADER;
+                case Shader::Type::Pixel: return GL_FRAGMENT_SHADER;
+                default: throw exc::EnumeratorNotImplemented {};
+            }
+        }
+
         std::string shader_type_definition_line(GLenum type) {
             switch (type) {
-                case GL_FRAGMENT_SHADER: return "#define FRAGMENT_SHADER\n";
                 case GL_VERTEX_SHADER: return "#define VERTEX_SHADER\n";
+                case GL_FRAGMENT_SHADER: return "#define FRAGMENT_SHADER\n";
                 default: throw exc::EnumeratorNotImplemented {};
             }
         }
@@ -39,7 +47,7 @@ namespace lv {
             return shader;
         }
 
-        Shader::Shader(std::string const& filename) :
+        Shader::Shader(std::string const& filename, std::unordered_set<Type> const& types) :
             program { glCreateProgram() } {
             std::ifstream shader_file(filename);
             if (!shader_file) {
@@ -54,11 +62,14 @@ namespace lv {
             shader_file.read(source.data(), source.size());
             shader_file.close();
 
-            // TODO: specify which shader types are in the source file
-            std::vector<GLuint> shaders = {
-                compile_shader(GL_VERTEX_SHADER, source),
-                compile_shader(GL_FRAGMENT_SHADER, source),
-            };
+            std::vector<GLuint> shaders;
+            shaders.reserve(types.size());
+            std::transform(
+                std::begin(types),
+                std::end(types),
+                std::back_inserter(shaders),
+                [&source] (Type type) { return compile_shader(shader_type_to_gl_type(type), source); }
+            );
 
             for (auto const& shader : shaders) glAttachShader(program, shader);
             glLinkProgram(program);
@@ -69,6 +80,8 @@ namespace lv {
             }
 
             build_uniform_cache();
+
+            Log::core_debug("Loaded {} shaders from {}", types.size(), filename);
         }
 
         Shader::~Shader() {

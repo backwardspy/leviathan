@@ -24,7 +24,7 @@ namespace lv {
         constexpr ecs::ECS const& get_ecs() const { return ecs; }
         constexpr ecs::ECS& get_ecs() { return ecs; }   // cppcheck-suppress functionConst
 
-        virtual ~Application() = default;
+        virtual ~Application();
 
     protected:
         Application();

@@ -3,7 +3,7 @@
 namespace lv {
     class Shader {
     public:
-        enum class Type { Pixel, Vertex };
+        enum class Type { Vertex, Pixel };
 
         virtual void use() = 0;
 

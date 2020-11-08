@@ -5,14 +5,21 @@
 #include "leviathan/ecs/default_components.h"
 
 #include "leviathan/layers/imgui_layer.h"
+#include "..\include\leviathan\application.h"
 
 namespace lv {
     Application::Application() :
         window { { { 1280, 800 }, "Leviathan Application"}, event_bus },
         layer_stack { event_bus }
     {
+        event_bus.add_listener(this);
         ecs::register_default_components(ecs);
         mesh_renderer = ecs.register_system<ecs::MeshRenderer>(ecs::MeshRenderer::get_archetype(ecs), ecs);
+    }
+
+    Application::~Application() {
+        // event_bus is about to be deleted anyway, but it can't hurt to clean things up properly.
+        event_bus.remove_listener(this);
     }
 
     int Application::run() {
@@ -45,7 +52,7 @@ namespace lv {
 #pragma endregion
 
 #pragma region Rendering
-            Renderer::clear();
+            renderer::clear();
 
             layer_stack.pre_render();
             layer_stack.render();
@@ -70,7 +77,6 @@ namespace lv {
     }
 
     void Application::init() {
-        event_bus.add_listener(*this);
         Input::init(event_bus, window);
         layer_stack.init(with_default_layers(get_layers()));
         running = true;

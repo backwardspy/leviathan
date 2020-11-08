@@ -2,8 +2,12 @@
 #include "leviathan/layer_stack.h"
 
 namespace lv {
-    LayerStack::LayerStack(EventBus& event_bus) {
-        event_bus.add_listener(*this);
+    LayerStack::LayerStack(EventBus& event_bus) : event_bus(event_bus) {
+        event_bus.add_listener(this);
+    }
+
+    LayerStack::~LayerStack() {
+        event_bus.remove_listener(this);
     }
 
     void LayerStack::init(LayerVector&& app_layers) {

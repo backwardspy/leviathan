@@ -8,7 +8,7 @@ namespace lv {
     namespace opengl {
         class Shader : public lv::Shader {
         public:
-            explicit Shader(std::string const& filename);
+            explicit Shader(std::string const& filename, std::unordered_set<Type> const& types);
 
             void use() override;
 

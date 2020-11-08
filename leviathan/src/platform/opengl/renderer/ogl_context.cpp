@@ -105,20 +105,20 @@ namespace lv {
             glfwSwapBuffers(handle);
         }
 
-        ref<lv::Shader> Context::make_shader(std::string const& filename) {
-            return make_scope<lv::opengl::Shader>(filename);
+        ref<lv::Shader> Context::make_shader(std::string const& filename, std::unordered_set<lv::Shader::Type> const& types) {
+            return make_scope<Shader>(filename, types);
         }
 
         ref<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex>&& vertices) {
-            return make_scope<lv::opengl::VertexArray>(std::move(vertices), auto_index(vertices.size()));
+            return make_scope<VertexArray>(std::move(vertices), auto_index(vertices.size()));
         }
 
         ref<lv::VertexArray> Context::make_vertex_array(std::vector<Vertex>&& vertices, std::vector<Index>&& indices) {
-            return make_scope<lv::opengl::VertexArray>(std::move(vertices), std::move(indices));
+            return make_scope<VertexArray>(std::move(vertices), std::move(indices));
         }
 
         ref<lv::Texture> Context::make_texture(std::string const& filename) {
-            return make_scope<lv::opengl::Texture>(filename);
+            return make_scope<Texture>(filename);
         }
     }
 }

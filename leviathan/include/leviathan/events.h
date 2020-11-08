@@ -118,13 +118,18 @@ namespace lv {
 
     class EventBus {
     public:
-        void add_listener(IEventListener&);
+        void add_listener(IEventListener* const);
+        void remove_listener(IEventListener* const);
         void push(Event&&);
         void drain();
 
     private:
         std::queue<Event> events {};
-        // TODO: is reference_wrapper the right thing to use here?
-        std::vector<std::reference_wrapper<IEventListener>> listeners {};
+        // TODO: not a big fan of storing raw pointers here
+        // but as of 2020/11/07 there aren't many good options:
+        // * no way to create a weak_ptr from `this` without jumping through hoops
+        // * reference_wrapper doesn't really capture what i'm trying to do
+        // * observer_ptr is in experimental status (and may be renamed?)
+        std::list<IEventListener*> listeners {};
     };
 }

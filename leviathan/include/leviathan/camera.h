@@ -5,9 +5,10 @@
 namespace lv {
     class Camera {
     public:
-        enum class Mode { Orthographic };
+        enum class Mode { Orthographic, Perspective };
 
-        static Camera make_orthographic(float ortho_size, float aspect_ratio);
+        static ref<Camera> make_orthographic(float ortho_size, float aspect_ratio);
+        static ref<Camera> make_perspective(float vertical_fov, float aspect_ratio, float near_plane = 0.1f, float far_plane = 100.0f);
 
         constexpr glm::mat4 get_v_matrix() const { return v; }
         constexpr glm::mat4 get_p_matrix() const { return p; }
@@ -39,5 +40,9 @@ namespace lv {
         glm::mat4 p { glm::identity<glm::mat4>() };
 
         float ortho_size = 1.0f;
+
+        float vertical_fov = 1.0f;
+        float near_plane = 0.1f;
+        float far_plane = 100.0f;
     };
 }

@@ -22,7 +22,7 @@ namespace lv {
         virtual void make_current() = 0;
         virtual void present() = 0;
 
-        virtual ref<Shader> make_shader(std::string const&) = 0;
+        virtual ref<Shader> make_shader(std::string const& filename, std::unordered_set<lv::Shader::Type> const&) = 0;
         virtual ref<VertexArray> make_vertex_array(std::vector<Vertex>&&) = 0;
         virtual ref<VertexArray> make_vertex_array(std::vector<Vertex>&&, std::vector<Index>&&) = 0;
         virtual ref<Texture> make_texture(std::string const& filename) = 0;

@@ -11,13 +11,14 @@ namespace lv {
     public:
         static void init(EventBus& event_bus, Window const&);
 
-        static bool is_key_pressed(KeyCode code);
-        static bool is_key_just_pressed(KeyCode code);
-        static bool is_key_just_released(KeyCode code);
+        static bool is_key_pressed(KeyCode);
+        static bool is_key_just_pressed(KeyCode);
+        static bool is_key_just_released(KeyCode);
+        static int key_axis(KeyCode positive_code, KeyCode negative_code);
 
-        static bool is_button_pressed(ButtonCode code);
-        static bool is_button_just_pressed(ButtonCode code);
-        static bool is_button_just_released(ButtonCode code);
+        static bool is_button_pressed(ButtonCode);
+        static bool is_button_just_pressed(ButtonCode);
+        static bool is_button_just_released(ButtonCode);
 
         static glm::vec2 get_mouse_position();
 
