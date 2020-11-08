@@ -2,10 +2,9 @@
 #include "leviathan/application.h"
 #include "leviathan/renderer/renderer.h"
 #include "leviathan/core/time.h"
-#include "leviathan/ecs/default_components.h"
+#include "leviathan/scene/components.h"
 
 #include "leviathan/layers/imgui_layer.h"
-#include "..\include\leviathan\application.h"
 
 namespace lv {
     Application::Application() :
@@ -13,8 +12,8 @@ namespace lv {
         layer_stack { event_bus }
     {
         event_bus.add_listener(this);
-        ecs::register_default_components(ecs);
-        mesh_renderer = ecs.register_system<ecs::MeshRenderer>(ecs::MeshRenderer::get_archetype(ecs), ecs);
+
+        ent_registry.on_construct<Camera>().connect<&Application::on_camera_constructed>(*this);
     }
 
     Application::~Application() {
@@ -57,8 +56,23 @@ namespace lv {
             layer_stack.pre_render();
             layer_stack.render();
 
-            // TODO: this should probably be in a layer
-            mesh_renderer->render();
+            // TODO: this should probably be its own layer or something
+            auto cameras = ent_registry.view<Transform, Camera>();
+            auto meshes = ent_registry.view<Transform, MeshRenderer>();
+            for (auto ent : cameras) {
+                auto const& [camera_transform, camera] = cameras.get<Transform, Camera>(ent);
+                if (!camera.active) continue;
+                auto view_projection = camera.get_projection() * camera_transform.inverse_matrix();
+                for (auto ent : meshes) {
+                    auto const& [model, mesh] = meshes.get<Transform, MeshRenderer>(ent);
+                    renderer::submit(
+                        *mesh.material,
+                        *mesh.vertex_array,
+                        model.matrix(),
+                        view_projection
+                    );
+                }
+            }
 
             layer_stack.gui();
             layer_stack.post_render();
@@ -95,5 +109,13 @@ namespace lv {
     LayerVector Application::with_default_layers(LayerVector&& layers) const {
         layers.insert(std::begin(layers), make_scope<ImGuiLayer>(window));
         return layers;
+    }
+
+    void Application::on_camera_constructed(entt::registry& registry, entt::entity entity) {
+        // if this is the only camera, set it active.
+        if (registry.view<Camera>().size() == 1) {
+            auto& cam = registry.get<Camera>(entity);
+            cam.active = true;
+        }
     }
 }

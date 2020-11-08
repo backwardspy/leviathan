@@ -48,7 +48,8 @@ namespace lv {
         };
 
         struct MouseEvent {
-            glm::vec2 coord;
+            glm::vec2 position;
+            glm::vec2 delta;
         };
 
         struct TextEvent {
@@ -93,14 +94,14 @@ namespace lv {
         ev.button = { code };
         return ev;
     }
-    constexpr Event mouse_moved_event(glm::vec2 position) {
+    constexpr Event mouse_moved_event(glm::vec2 position, glm::vec2 delta) {
         Event ev { Event::Type::MouseMoved, EventCategory::Mouse };
-        ev.mouse = { position };
+        ev.mouse = { position, delta };
         return ev;
     }
-    constexpr Event mouse_scrolled_event(glm::vec2 offset) {
+    constexpr Event mouse_scrolled_event(glm::vec2 delta) {
         Event ev { Event::Type::MouseScrolled, EventCategory::Mouse };
-        ev.mouse = { offset };
+        ev.mouse = { glm::vec2{}, delta };
         return ev;
     }
     constexpr Event text_entered_event(unsigned int codepoint) {

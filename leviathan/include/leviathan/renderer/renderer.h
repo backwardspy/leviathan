@@ -12,6 +12,6 @@ namespace lv {
 
     namespace renderer {
         void clear(glm::vec4 color = glm::vec4(0, 0, 0, 1));
-        void submit(Material&, VertexArray&, glm::mat4 transform, RenderMode = RenderMode::Triangles);
+        void submit(Material& material, VertexArray& va, glm::mat4 model, glm::mat4 view_projection, RenderMode mode = RenderMode::Triangles);
     }
 }

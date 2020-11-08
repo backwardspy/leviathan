@@ -15,9 +15,11 @@ namespace lv {
             impl->clear();
         }
 
-        void submit(Material& material, VertexArray& va, glm::mat4 transform, RenderMode mode) {
+        void submit(Material& material, VertexArray& va, glm::mat4 model, glm::mat4 view_projection, RenderMode mode) {
             material.use();
-            material.get_shader().set_mat4("Model", transform);
+            auto& shader = material.get_shader();
+            shader.set_mat4("ViewProjection", view_projection);
+            shader.set_mat4("Model", model);
             va.use();
             impl->draw_vertex_array(va, mode);
         }

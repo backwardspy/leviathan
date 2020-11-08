@@ -144,11 +144,19 @@ namespace lv {
         }
 
         void WindowImpl::on_mouse_moved(double x, double y) {
-            event_bus.push(mouse_moved_event({ static_cast<float>(x), static_cast<float>(y) }));
+            glm::vec2 position(static_cast<float>(x), static_cast<float>(y));
+            glm::vec2 delta;
+
+            // stop the drag mouse move event from showing some insane delta
+            if (last_mouse_position.x < 0) delta = glm::vec2(0);
+            else delta = position - last_mouse_position;
+            last_mouse_position = position;
+
+            event_bus.push(mouse_moved_event(position, delta));
         }
 
         void WindowImpl::on_mouse_scrolled(double x_offset, double y_offset) {
-            event_bus.push(mouse_scrolled_event({ static_cast<float>(x_offset), static_cast<float>(y_offset) }));
+            event_bus.push(mouse_scrolled_event(glm::vec2(static_cast<float>(x_offset), static_cast<float>(y_offset))));
         }
     }
 }

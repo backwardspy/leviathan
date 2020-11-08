@@ -2,14 +2,15 @@
 
 #include "core.h"
 #include "core/time.h"
-#include "application.h"
-#include "camera.h"
+#include "core/math.h"
+#include "scene/components.h"
 #include "renderer/renderer.h"
-#include "ecs/ecs.h"
-#include "ecs/default_components.h"
+#include "application.h"
 
 #include "entry_point.h"
 
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/norm.hpp>
+#include <entt/entt.hpp>
