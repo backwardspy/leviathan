@@ -6,8 +6,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <GLFW/glfw3.h>
-#else
-#error ImGuiLayer requires an LV_GRAPHICS_* option defined in order to select an ImGui backend.
 #endif
 
 #include "leviathan/layers/imgui_layer.h"

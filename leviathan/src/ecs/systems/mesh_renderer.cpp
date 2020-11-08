@@ -12,7 +12,7 @@ namespace lv {
             for (auto const& entity : entities) {
                 auto const& transform = ecs.get_component<lv::ecs::Transform>(entity);
                 auto const& mesh = ecs.get_component<lv::ecs::Mesh>(entity);
-                lv::Renderer::submit(*mesh.material, *mesh.vertex_array, transform.calculate_matrix());
+                lv::renderer::submit(*mesh.material, *mesh.vertex_array, transform.calculate_matrix());
             }
         }
 

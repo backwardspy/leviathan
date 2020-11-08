@@ -1,38 +1,45 @@
 #include <leviathan/leviathan.h>
 
-struct DragControl {};
+struct CameraController2D {
+    float speed = 1.0f;
+    int zoom_level = 0;
+};
 
-class DragControlSystem : public lv::ecs::System {
+class CameraController2DSystem : public lv::ecs::System {
 public:
-    DragControlSystem(lv::ecs::ECS& ecs, lv::Window const& window) : ecs { ecs }, window { window } {}
+    explicit CameraController2DSystem(lv::ecs::ECS& ecs) : ecs { ecs } {}
 
-    void set_dragging(bool is_dragging) {
-        dragging = is_dragging;
-    }
+    void update() {
+        auto dt = lv::time::to_seconds(lv::time::delta_time).count();
 
-    void pre_render() const {
+        glm::vec2 motion;
+        motion.x = static_cast<float>(lv::Input::key_axis(lv::KeyCode::D, lv::KeyCode::A));
+        motion.y = static_cast<float>(lv::Input::key_axis(lv::KeyCode::W, lv::KeyCode::S));
+
         for (auto const& entity : entities) {
-            auto& transform = ecs.get_component<lv::ecs::Transform>(entity);
+            auto const& controller = ecs.get_component<CameraController2D>(entity);
+            auto zoom = pow(1.1f, -controller.zoom_level);
 
-            if (dragging) {
-                auto mouse_uv = lv::Input::get_mouse_position() / static_cast<glm::vec2>(window.get_size());
-                mouse_uv.y = 1.0f - mouse_uv.y; // mouse Y and world Y are opposite
-                transform.translation = glm::vec3(-1.0f + 2.0f * mouse_uv, 0.0f);
-            }
+            auto& transform = ecs.get_component<lv::ecs::Transform>(entity);
+            auto translation = glm::translate(glm::identity<glm::mat4>(), glm::vec3(motion * controller.speed * zoom * dt, 0));
+            transform.translation = translation * glm::vec4(transform.translation, 1);
+
+            auto& cam = ecs.get_component<lv::ecs::Camera>(entity);
+            cam.camera->set_ortho_size(zoom);
+            cam.camera->set_position(transform.translation);    // TODO: get rid of this duplication
         }
     }
 
     static lv::ecs::Archetype get_archetype(lv::ecs::ECS& ecs) {
         lv::ecs::Archetype archetype;
-        archetype.set(ecs.get_component_type<DragControl>());
+        archetype.set(ecs.get_component_type<CameraController2D>());
         archetype.set(ecs.get_component_type<lv::ecs::Transform>());
+        archetype.set(ecs.get_component_type<lv::ecs::Camera>());
         return archetype;
     }
 
 private:
     lv::ecs::ECS& ecs;
-    lv::Window const& window;
-    bool dragging = false;
 };
 
 struct RotateOverTime {
@@ -48,7 +55,7 @@ public:
         for (auto const& entity : entities) {
             auto const& rot = ecs.get_component<RotateOverTime>(entity);
             auto& transform = ecs.get_component<lv::ecs::Transform>(entity);
-            transform.rotation = glm::rotate(transform.rotation, rot.rate * dt, { 0, 0, 1 });
+            transform.rotation = glm::rotate(transform.rotation, rot.rate * dt, glm::vec3(0, 0, 1));
         }
     }
 
@@ -68,47 +75,57 @@ public:
     explicit CustomLayer(lv::Application& app) :
         Layer("Custom"),
         app(app),
-        shader(app.get_render_context().make_shader("assets/shaders/unlit_generic.glsl")),
+        shader(app.get_render_context().make_shader("assets/shaders/unlit_generic.glsl", { lv::Shader::Type::Vertex, lv::Shader::Type::Pixel })),
         material(app.get_render_context().make_material(shader)),
-        quad_entity(app.get_ecs().make_entity()),
-        tri_entity(app.get_ecs().make_entity()),
-        cam(lv::Camera::make_orthographic(1.0f, app.get_window().get_aspect_ratio())) {
-        auto& ctx = app.get_render_context();
-
+        quad(app.get_ecs().make_entity()),
+        tri(app.get_ecs().make_entity()),
+        cam(app.get_ecs().make_entity()) {
         shader->set_alpha_blend(true);
 
+        auto& ctx = app.get_render_context();
         material->set_texture("MainTex", 0, ctx.make_texture("assets/textures/duck.png"));
         material->set_parameter("Tint", tint);
 
-        set_shader_vp();
-
         register_components();
         register_systems();
-
         init_entities();
+
+        set_shader_vp();
     }
 
 private:
     void set_shader_vp() {
         // TODO: move into renderer/scene?
-        shader->set_mat4("ViewProjection", cam.get_vp_matrix());
+        // this needs to come from the ECS somehow...
+        auto& ecs = app.get_ecs();
+        auto& cam_component = ecs.get_component<lv::ecs::Camera>(cam);
+        shader->set_mat4("ViewProjection", cam_component.camera->get_vp_matrix());
     }
 
     void register_components() {
         auto& ecs = app.get_ecs();
-        ecs.register_component<DragControl>();
+        ecs.register_component<CameraController2D>();
         ecs.register_component<RotateOverTime>();
     }
 
     void register_systems() {
         auto& ecs = app.get_ecs();
-        drag_control_system = ecs.register_system<DragControlSystem>(DragControlSystem::get_archetype(ecs), ecs, app.get_window());
+        camera_controller_system = ecs.register_system<CameraController2DSystem>(CameraController2DSystem::get_archetype(ecs), ecs);
         rotate_over_time_system = ecs.register_system<RotateOverTimeSystem>(RotateOverTimeSystem::get_archetype(ecs), ecs);
     }
 
     void init_entities() {
+        init_cam_entity();
         init_quad_entity();
         init_tri_entity();
+    }
+
+    void init_cam_entity() {
+        auto camera = lv::Camera::make_orthographic(1.0f, app.get_window().get_aspect_ratio());
+        auto& ecs = app.get_ecs();
+        ecs.add_component<lv::ecs::Transform>(cam, {});
+        ecs.add_component<lv::ecs::Camera>(cam, { camera });
+        ecs.add_component<CameraController2D>(cam, {});
     }
 
     void init_quad_entity() {
@@ -131,9 +148,8 @@ private:
         }();
 
         auto& ecs = app.get_ecs();
-        ecs.add_component(quad_entity, lv::ecs::Transform { glm::vec3(0), glm::identity<glm::quat>(), glm::vec3(5) });
-        ecs.add_component(quad_entity, lv::ecs::Mesh { material, vertex_array });
-        ecs.add_component(quad_entity, RotateOverTime {});
+        ecs.add_component(quad, lv::ecs::Transform { glm::vec3(0), glm::identity<glm::quat>(), glm::vec3(5) });
+        ecs.add_component(quad, lv::ecs::Mesh { material, vertex_array });
     }
 
     void init_tri_entity() {
@@ -153,26 +169,19 @@ private:
         mat->set_texture("MainTex", 0, ctx.make_texture("assets/textures/pigeon.png"));
 
         auto& ecs = app.get_ecs();
-        ecs.add_component(tri_entity, lv::ecs::Transform {});
-        ecs.add_component(tri_entity, lv::ecs::Mesh { mat, vertex_array });
-        ecs.add_component(tri_entity, DragControl {});
+        ecs.add_component(tri, lv::ecs::Transform {});
+        ecs.add_component(tri, lv::ecs::Mesh { mat, vertex_array });
+        ecs.add_component(tri, RotateOverTime {});
     }
 
     bool handle(lv::Event const& event) override {
         switch (event.type) {
-            case lv::Event::Type::MouseScrolled:
-                zoom += event.mouse.coord.y;
-                cam.set_ortho_size(pow(1.1f, -zoom));
-                set_shader_vp();
-                return true;
-            case lv::Event::Type::ButtonPressed:
-            case lv::Event::Type::ButtonReleased:
-                if (event.button.code == lv::ButtonCode::Left)
-                    drag_control_system->set_dragging(event.type == lv::Event::Type::ButtonPressed);
-                break;
             case lv::Event::Type::WindowResized:
-                cam.set_aspect_ratio(app.get_window().get_aspect_ratio());
+                app.get_ecs().get_component<lv::ecs::Camera>(cam).camera->set_aspect_ratio(app.get_window().get_aspect_ratio());
                 set_shader_vp();
+                break;
+            case lv::Event::Type::MouseScrolled:
+                app.get_ecs().get_component<CameraController2D>(cam).zoom_level += static_cast<int>(event.mouse.coord.y);
                 break;
         }
         return false;
@@ -180,21 +189,14 @@ private:
 
     void update() override {
         rotate_over_time_system->update();
-    }
-
-    void pre_render() override {
-        drag_control_system->pre_render();
+        camera_controller_system->update();
+        set_shader_vp();
     }
 
     void gui() override {
-        auto const mouse_pos = lv::Input::get_mouse_position();
-        auto const cam_pos = cam.get_position();
         auto const dt = lv::time::render_delta_time();
 
         ImGui::Begin("Sandbox");
-        ImGui::Text("Mouse: %.f, %.f", mouse_pos.x, mouse_pos.y);
-        ImGui::Text("Camera position: %.3f, %.3f", cam_pos.x, cam_pos.y);
-        ImGui::Text("Zoom: %.f", zoom);
         ImGui::Text("Performance: %.3f ms/frame (%.f fps)", lv::time::to_milliseconds(dt).count(), 1.0f / lv::time::to_seconds(dt).count());
         ImGui::Text("Simulation Time: %.3f", lv::time::to_seconds(lv::time::elapsed()).count());
         ImGui::End();
@@ -215,12 +217,9 @@ private:
     // shader params
     glm::vec4 tint = glm::vec4(1.0f);
 
-    lv::ecs::Entity quad_entity, tri_entity;
+    lv::ecs::Entity quad, tri, cam;
 
-    lv::Camera cam;
-    float zoom = 0.0f;
-
-    lv::ref<DragControlSystem> drag_control_system;
+    lv::ref<CameraController2DSystem> camera_controller_system;
     lv::ref<RotateOverTimeSystem> rotate_over_time_system;
 };
 

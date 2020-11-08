@@ -10,6 +10,7 @@ namespace lv {
     class LayerStack : public IEventListener {
     public:
         explicit LayerStack(EventBus& event_bus);
+        ~LayerStack();
 
         void init(LayerVector&&);
 
@@ -25,6 +26,7 @@ namespace lv {
         void handle(Event const&) override;
 
     private:
+        EventBus& event_bus;
         std::vector<scope<Layer>> layers;
     };
 }

@@ -7,16 +7,19 @@ namespace lv {
 
     void Input::init(EventBus& event_bus, Window const& window) {
         if (instance) return;
-        instance = scope<Input> { new Input{event_bus, window} }; // make_scope can't access private constructor
+        instance = scope<Input>(new Input(event_bus, window)); // make_scope can't access private constructor.
     }
 
     Input::Input(EventBus& event_bus, Window const& window) :
-        window { window } {
+        window(window) {
         std::fill(std::begin(cur_keys), std::end(cur_keys), false);
         std::fill(std::begin(prev_keys), std::end(prev_keys), false);
         std::fill(std::begin(cur_buttons), std::end(cur_buttons), false);
         std::fill(std::begin(prev_buttons), std::end(prev_buttons), false);
-        event_bus.add_listener(*this);
+
+        // we have static lifetime, so we never remove this listener again.
+        // by the time our destructor is called, this event bus is long gone.
+        event_bus.add_listener(this);
     }
 
     bool Input::is_key_pressed(KeyCode code) {
@@ -29,6 +32,12 @@ namespace lv {
 
     bool Input::is_key_just_released(KeyCode code) {
         return !instance->cur_keys[(size_t) code] && instance->prev_keys[(size_t) code];
+    }
+
+    int Input::key_axis(KeyCode positive_code, KeyCode negative_code) {
+        return
+            (is_key_pressed(positive_code) ? 1 : 0) -
+            (is_key_pressed(negative_code) ? 1 : 0);
     }
 
     bool Input::is_button_pressed(ButtonCode code) {

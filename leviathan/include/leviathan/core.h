@@ -5,16 +5,19 @@
 #if defined(_WIN32)
 #define LV_PLATFORM_WINDOWS
 #else
-#define LV_PLATFORM_UNKNOWN
+#error Unsupported platform.
 #endif
 
 #if defined(LV_GRAPHICS_OPENGL)
 constexpr int LVGLVersionMajor = 4;
 constexpr int LVGLVersionMinor = 6;
+#else
+#error Unsupported graphics API.
 #endif
 
 namespace lv {
     template<class T> using ref = std::shared_ptr<T>;
+    template<class T> using weak_ref = std::weak_ptr<T>;
     template<class T> using scope = std::unique_ptr<T>;
 
     template<class T, class... Args>

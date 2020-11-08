@@ -5,10 +5,19 @@
 #include "leviathan/camera.h"
 
 namespace lv {
-    Camera Camera::make_orthographic(float ortho_size, float aspect_ratio) {
-        Camera cam { Camera::Mode::Orthographic, aspect_ratio };
-        cam.ortho_size = ortho_size;
-        cam.calculate_p_matrix();
+    ref<Camera> Camera::make_orthographic(float ortho_size, float aspect_ratio) {
+        auto cam = ref<Camera>(new Camera(Camera::Mode::Orthographic, aspect_ratio));   // private constructor
+        cam->ortho_size = ortho_size;
+        cam->calculate_p_matrix();
+        return cam;
+    }
+
+    ref<Camera> Camera::make_perspective(float vertical_fov, float aspect_ratio, float near_plane, float far_plane) {
+        auto cam = ref<Camera>(new Camera(Camera::Mode::Perspective, aspect_ratio));    // private constructor
+        cam->vertical_fov = vertical_fov;
+        cam->near_plane = near_plane;
+        cam->far_plane = far_plane;
+        cam->calculate_p_matrix();
         return cam;
     }
 
@@ -52,6 +61,9 @@ namespace lv {
         switch (mode) {
             case Mode::Orthographic:
                 p = glm::ortho(-ortho_size * aspect_ratio, ortho_size * aspect_ratio, -ortho_size, ortho_size);
+                break;
+            case Mode::Perspective:
+                p = glm::perspective(vertical_fov, aspect_ratio, near_plane, far_plane);
                 break;
             default:
                 throw exc::EnumeratorNotImplemented {};
